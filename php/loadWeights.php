@@ -14,8 +14,8 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = "";
 if($searchValue != ''){
-   $searchQuery = " and (serial_no like '%".$searchValue."%' or 
-   lorry_no like '%".$searchValue."%' )";
+   $searchQuery = " and (customer_name like '%".$searchValue."%' or 
+   product like '%".$searchValue."%' )";
 }
 
 ## Total number of records without filtering
@@ -38,22 +38,14 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   $data[] = array( 
     "no"=>$counter,
     "id"=>$row['id'],
-    "serial_no"=>$row['serial_no'],
-    "group_no"=>$row['group_no'],
-    "customer"=>$row['customer'],
-    "supplier"=>$row['supplier'],
+    "status"=>$row['status'],
+    "customer_name"=>$row['customer_name'],
+    "supplier_name"=>$row['supplier_name'],
     "product"=>$row['product'],
-    "driver_name"=>$row['driver_name'],
-    "lorry_no"=>$row['lorry_no'],
-    "farm_id"=>$row['farm_id'],
-    "average_cage"=>$row['average_cage'],
-    "average_bird"=>$row['average_bird'],
-    "minimum_weight"=>$row['minimum_weight'],
-    "maximum_weight"=>$row['maximum_weight'],
-    "weight_data"=>json_decode($row['weight_data'], true),
-    "created_datetime"=>$row['created_datetime'],
-    "start_time"=>$row['start_time'],
-    "end_time"=>$row['end_time']
+    "weight"=>$row['weight'],
+    "shift"=>$row['shift'],
+    "staff_name"=>$row['staff_name'],
+    "created_datetime"=>$row['created_datetime']
   );
 
   $counter++;
@@ -64,7 +56,8 @@ $response = array(
   "draw" => intval($draw),
   "iTotalRecords" => $totalRecords,
   "iTotalDisplayRecords" => $totalRecordwithFilter,
-  "aaData" => $data
+  "aaData" => $data,
+  "query" => $empQuery
 );
 
 echo json_encode($response);

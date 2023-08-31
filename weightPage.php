@@ -150,14 +150,10 @@ else{
               <thead>
                 <tr>
                   <th>No</th>
-                  <th>Serial No</th>
-                  <th>Group No</th>
                   <th>Customers</th>
-                  <th>Suppliers</th>
                   <th>Product</th>
-                  <th>Vehicle No</th>
-                  <th>Driver Name</th>
-                  <th>Farm Id</th>
+                  <th>Weight</th>
+                  <th>Created <br>Date & Time</th>
                   <th></th>
                 </tr>
               </thead>
@@ -483,14 +479,10 @@ $(function () {
     },
     'columns': [
       { data: 'no' },
-      { data: 'serial_no' },
-      { data: 'group_no' },
-      { data: 'customer' },
-      { data: 'supplier' },
+      { data: 'customer_name' },
       { data: 'product' },
-      { data: 'lorry_no' },
-      { data: 'driver_name' },
-      { data: 'farm_id' },
+      { data: 'weight' },
+      { data: 'created_datetime' },
       { 
         className: 'dt-control',
         orderable: false,
@@ -953,11 +945,10 @@ function updateWeights(){
 }
 
 function format (row) {
-  return '<div class="row"><div class="col-md-3"><p>Average Cage Weight: '+row.average_cage+
-  ' kg</p></div><div class="col-md-3"><p>Average Bird Weight: '+row.average_bird+
-  ' kg</p></div><div class="col-md-3"><p>Minimum Weight: '+row.minimum_weight+
-  ' kg</p></div><div class="col-md-3"><p>Maximum Weight: '+row.maximum_weight+
-  ' kg</p></div></div><div class="row"><div class="col-3"><button type="button" class="btn btn-danger btn-sm" onclick="deactivate('+row.id+
+  return '<div class="row"><div class="col-md-3"><p>Status: '+row.status+
+  '</p></div><div class="col-md-3"><p>Shift: '+row.shift+
+  '</p></div><div class="col-md-3"><p>Staff Name: '+row.staff_name+
+  '</p></div></div><div class="row"><div class="col-3"><button type="button" class="btn btn-danger btn-sm" onclick="deactivate('+row.id+
   ')"><i class="fas fa-trash"></i></button></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
   ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
   '</div>';
