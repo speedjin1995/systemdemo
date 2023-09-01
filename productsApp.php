@@ -323,15 +323,11 @@
                   <input type="text" class="form-control" name="code" id="code" placeholder="Enter Product Code" maxlength="10" required>
                 </div>
                 <div class="form-group">
-                  <label for="product">Chicken Description *</label>
+                  <label for="product">Product Name *</label>
                   <input type="text" class="form-control" name="product" id="product" placeholder="Enter Product Name" required>
                 </div>
                 <div class="form-group"> 
-                  <label for="price">Farm ID *</label>
-                  <input type="text"  class="form-control" id="price" name="price" placeholder="Enter Product Price" required>
-                </div>
-                <div class="form-group"> 
-                  <label for="remark">Remark </label>
+                  <label for="remark">Product Description </label>
                   <textarea class="form-control" id="remark" name="remark" placeholder="Enter your remark"></textarea>
                 </div>
               </div>
@@ -401,7 +397,6 @@ $(function () {
         'columns': [
             { data: 'product_code' },
             { data: 'product_name' },
-            { data: 'farm_id' },
             { data: 'remark' },
             { 
                 data: 'id',
@@ -446,7 +441,6 @@ $(function () {
         $('#addModal').find('#id').val("");
         $('#addModal').find('#code').val("");
         $('#addModal').find('#product').val("");
-        $('#addModal').find('#price').val("");
         $('#addModal').find('#remark').val("");
         $('#addModal').modal('show');
         
@@ -475,7 +469,6 @@ function edit(id){
             $('#addModal').find('#id').val(obj.message.id);
             $('#addModal').find('#code').val(obj.message.product_code);
             $('#addModal').find('#product').val(obj.message.product_name);
-            $('#addModal').find('#price').val(obj.message.farm_id);
             $('#addModal').find('#remark').val(obj.message.remark);
             $('#addModal').modal('show');
             
