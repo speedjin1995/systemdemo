@@ -304,7 +304,7 @@ to get the desired effect
     <!-- Brand Logo -->
     <a href="#" class="brand-link logo-switch">
       <img src="assets/logoSmall.png" alt="Sneakercube Logo" class="brand-image-xl logo-xs">
-      <img src="assets/logo.png" alt="Sneakercube Logo" class="brand-image-xl logo-xl">
+      <img src="assets/logo.jpeg" alt="Sneakercube Logo" class="brand-image-xl logo-xl">
     </a>
 
     <!-- Sidebar -->
