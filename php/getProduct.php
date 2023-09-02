@@ -26,6 +26,10 @@ if(isset($_POST['userID'])){
                 $message['product_code'] = $row['product_code'];
                 $message['product_name'] = $row['product_name'];
                 $message['remark'] = $row['remark'];
+                $message['basis_weight'] = $row['basis_weight'];
+                $message['width'] = $row['width'];
+                $message['diameter'] = $row['diameter'];
+                $message['class'] = $row['class'];
             }
             
             echo json_encode(

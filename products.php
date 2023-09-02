@@ -82,6 +82,22 @@ else{
                   <label for="remark">Product Description </label>
                   <textarea class="form-control" id="remark" name="remark" placeholder="Enter your remark"></textarea>
                 </div>
+                <div class="form-group">
+                  <label for="product">Basis Weight *</label>
+                  <input type="text" class="form-control" name="basis" id="basis" placeholder="Enter Product Weight" required>
+                </div>
+                <div class="form-group">
+                  <label for="product">Width *</label>
+                  <input type="text" class="form-control" name="width" id="width" placeholder="Enter Product width" required>
+                </div>
+                <div class="form-group">
+                  <label for="product">Diameter *</label>
+                  <input type="text" class="form-control" name="diameter" id="diameter" placeholder="Enter Product diameter" required>
+                </div>
+                <div class="form-group">
+                  <label for="product">Class *</label>
+                  <input type="text" class="form-control" name="class" id="class" placeholder="Enter Product class" required>
+                </div>
               </div>
             </div>
             <div class="modal-footer justify-content-between">
@@ -155,6 +171,10 @@ $(function () {
         $('#addModal').find('#code').val("");
         $('#addModal').find('#product').val("");
         $('#addModal').find('#remark').val("");
+        $('#addModal').find('#basis').val("");
+        $('#addModal').find('#width').val("");
+        $('#addModal').find('#diameter').val("");
+        $('#addModal').find('#class').val("");
         $('#addModal').modal('show');
         
         $('#productForm').validate({
@@ -183,6 +203,10 @@ function edit(id){
             $('#addModal').find('#code').val(obj.message.product_code);
             $('#addModal').find('#product').val(obj.message.product_name);
             $('#addModal').find('#remark').val(obj.message.remark);
+            $('#addModal').find('#basis').val(obj.message.basis_weight);
+            $('#addModal').find('#width').val(obj.message.width);
+            $('#addModal').find('#diameter').val(obj.message.diameter);
+            $('#addModal').find('#class').val(obj.message.class);
             $('#addModal').modal('show');
             
             $('#productForm').validate({
