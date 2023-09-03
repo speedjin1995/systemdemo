@@ -31,7 +31,7 @@ function totalWeight($strings){
 if(isset($_POST['userID'], $_POST["file"])){
     $id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 
-    if ($select_stmt = $db->prepare("select weighing.net, weighing.created_datetime, products.product_code, products.basis_weight, products.width, products.diameter, products.class FROM weighing, products WHERE weighing.product = products.product_name AND weighing.id=?")) {
+    if ($select_stmt = $db->prepare("select weighing.serial_no, weighing.net, weighing.created_datetime, products.product_code, products.basis_weight, products.width, products.diameter, products.class FROM weighing, products WHERE weighing.product = products.product_name AND weighing.id=?")) {
         $select_stmt->bind_param('s', $id);
 
         if (! $select_stmt->execute()) {
@@ -50,6 +50,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                 list($year, $month, $day) = explode("-", $datePart);
                 $date = "$day-$month-$year";
                 $time = $timePart;
+                $serial = $row['serial_no'];
                 $weight = $row['net'].' kg';
                 $productCode = $row['product_code'];
                 $basis_weight = $row['basis_weight'];
@@ -160,25 +161,26 @@ if(isset($_POST['userID'], $_POST["file"])){
                             <tr style="border: 1px solid #000000;">
                                 <td style="width: 55%;border-top:0px;">
                                     <p>
-                                        <span style="font-size: 34px;font-family: sans-serif;font-weight: bold;">精牛原纸</span>
+                                        <span style="font-size: 36px;font-family: sans-serif;font-weight: bold;">精牛原纸</span>
                                     </p>
                                 </td>
                                 <td style="width: 45%;border-top:0px;">
                                     <p>
-                                        <span style="font-size: 16px;font-family: sans-serif;">口 合格证</span><br>
-                                        <span style="font-size: 14px;font-family: sans-serif;">Quality Certificate</span>
+                                        <span style="font-size: 18px;font-family: sans-serif;">口 合格证</span><br>
+                                        <span style="font-size: 16px;font-family: sans-serif;">Quality Certificate</span><br>
+                                        <span style="font-size: 16px;font-family: sans-serif;">('.$serial.')</span>
                                     </p>
                                 </td>
                             </tr>
                             <tr>
                                 <td style="width: 55%;border-top:3px;">
                                     <p>
-                                        <span style="font-size: 16px;font-family: sans-serif;">Time : '.$time.'</span>
+                                        <span style="font-size: 20px;font-family: sans-serif;">Time : '.$time.'</span>
                                     </p>
                                 </td>
                                 <td style="width: 45%;border-top:3px;">
                                     <p>
-                                        <span style="font-size: 16px;font-family: sans-serif;">DATE : '.$date.'</span>
+                                        <span style="font-size: 20px;font-family: sans-serif;">DATE : '.$date.'</span>
                                     </p>
                                 </td>
                             </tr>
@@ -193,12 +195,12 @@ if(isset($_POST['userID'], $_POST["file"])){
                             <tr style="border: 1px solid #000000;">
                                 <td style="width: 55%;border-top:0px;">
                                     <p>
-                                        <span style="font-size: 20px;font-family: sans-serif;">产品编号 Product No.</span>
+                                        <span style="font-size: 24px;font-family: sans-serif;">产品编号 Product No.</span>
                                     </p>
                                 </td>
                                 <td style="width: 45%;border-top:0px;">
                                     <p>
-                                        <span style="font-size: 20px;font-family: sans-serif;">定量 BASIS WEIGHT C/M2</span>
+                                        <span style="font-size: 24px;font-family: sans-serif;">定量 BASIS WEIGHT C/M2</span>
                                     </p>
                                 </td>
                             </tr>
@@ -206,7 +208,7 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 <td style="width: 55%;border-top:3px;">
                                     <img src="assets/barcode2.png" alt="Girl in a jacket" width="50%">
                                     <p style="margin-top: 0px;">
-                                        <span style="font-size: 14px;font-family: sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$productCode.'</span>
+                                        <span style="font-size: 16px;font-family: sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$productCode.'</span>
                                     </p>
                                 </td>
                                 <td style="width: 45%;border-top:3px;">
@@ -218,24 +220,24 @@ if(isset($_POST['userID'], $_POST["file"])){
                             <tr style="border: 1px solid #000000;">
                                 <td style="width: 55%;border-top:0px;">
                                     <p>
-                                        <span style="font-size: 20px;font-family: sans-serif;">宽度 WIDTH MM</span>
+                                        <span style="font-size: 24px;font-family: sans-serif;">宽度 WIDTH MM</span>
                                     </p>
                                 </td>
                                 <td style="width: 45%;border-top:0px;">
                                     <p>
-                                        <span style="font-size: 20px;font-family: sans-serif;">直径 DIAMETER MM</span>
+                                        <span style="font-size: 24px;font-family: sans-serif;">直径 DIAMETER MM</span>
                                     </p>
                                 </td>
                             </tr>
                             <tr>
                                 <td style="width: 55%;border-top:3px;">
                                     <p>
-                                        <span style="font-size: 20px;font-family: sans-serif;">'.$width.'</span>
+                                        <span style="font-size: 24px;font-family: sans-serif;">'.$width.'</span>
                                     </p>
                                 </td>
                                 <td style="width: 45%;border-top:3px;">
                                     <p>
-                                        <span style="font-size: 20pxs;font-family: sans-serif;">'.$diameter.'</span>
+                                        <span style="font-size: 26px;font-family: sans-serif;">'.$diameter.'</span>
                                     </p>
                                 </td>
                             </tr>
@@ -263,12 +265,12 @@ if(isset($_POST['userID'], $_POST["file"])){
                                 <td style="width: 55%;border-top:3px;">
                                     <img src="assets/barcode2.png" alt="Girl in a jacket" width="50%">
                                     <p style="margin-top: 0px;">
-                                        <span style="font-size: 14px;font-family: sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$weight.'</span>
+                                        <span style="font-size: 16px;font-family: sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$weight.'</span>
                                     </p>
                                 </td>
                                 <td style="width: 45%;border-top:3px;">
                                     <p>
-                                        <span style="font-size: 20px;font-family: sans-serif;">'.$class.'</span>
+                                        <span style="font-size: 24px;font-family: sans-serif;">'.$class.'</span>
                                     </p>
                                 </td>
                             </tr>

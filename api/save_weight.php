@@ -17,7 +17,42 @@ if(isset($post['status'], $post['customerName'], $post['product'], $post['weight
 	$shift = $post['shift'];
 	$staffName = $post['staffName'];
 	$createdDatetime = $post['createdDatetime'];
+	$serialNo = '0';
 	$today = date("Y-m-d 00:00:00");
+
+	if(!isset($post['serialNo']) || $post['serialNo'] == null || $post['serialNo'] == ''){
+		$serialNo = date("Ymd");
+
+		if ($select_stmt = $db->prepare("SELECT COUNT(*) FROM weighing WHERE created_datetime >= ?")) {
+            $select_stmt->bind_param('s', $today);
+            
+            // Execute the prepared query.
+            if (! $select_stmt->execute()) {
+                echo json_encode(
+                    array(
+                        "status" => "failed",
+                        "message" => "Failed to get latest count"
+                    )); 
+            }
+            else{
+                $result = $select_stmt->get_result();
+                $count = 1;
+                
+                if ($row = $result->fetch_assoc()) {
+                    $count = (int)$row['COUNT(*)'] + 1;
+                    $select_stmt->close();
+                }
+
+                $charSize = strlen(strval($count));
+
+                for($i=0; $i<(4-(int)$charSize); $i++){
+                    $serialNo.='0';  // S0000
+                }
+        
+                $serialNo .= strval($count);  //S00009
+			}
+		}
+	}
 
 	if(isset($post['id']) && $post['id'] != null && $post['id'] != ''){
 		if ($update_stmt = $db->prepare("UPDATE weight SET vehicleNo=?, lotNo=?, batchNo=?, invoiceNo=?, deliveryNo=?, purchaseNo=?, customer=?, productName=?, package=?
@@ -58,11 +93,11 @@ if(isset($post['status'], $post['customerName'], $post['product'], $post['weight
 		}
 	}
 	else{
-		if ($insert_stmt = $db->prepare("INSERT INTO weighing (status, customer_name, product, weight, tare, net, shift, staff_name, created_datetime) 
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")){
-		    $insert_stmt->bind_param('sssssssss', $status, $customerName, $product, $weight, $tare, $net, $shift, $staffName, $createdDatetime);
+		if ($insert_stmt = $db->prepare("INSERT INTO weighing (serial_no, status, customer_name, product, weight, tare, net, shift, staff_name, created_datetime) 
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
+		    $insert_stmt->bind_param('ssssssssss', $serialNo, $status, $customerName, $product, $weight, $tare, $net, $shift, $staffName, $createdDatetime);
 								
-								// Execute the prepared query.
+			// Execute the prepared query.
 			if (! $insert_stmt->execute()){
 				echo json_encode(
 					array(
@@ -78,7 +113,8 @@ if(isset($post['status'], $post['customerName'], $post['product'], $post['weight
 				echo json_encode(
 					array(
 						"status"=> "success", 
-						"message"=> "Added Successfully!!" 
+						"message"=> "Added Successfully!!",
+						"serial"=> $serialNo
 					)
 				);
 			}

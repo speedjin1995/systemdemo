@@ -8,6 +8,11 @@ $width = '';
 $diameter = '';
 $class = '';
 $weight = '0.00kg';
+$serial = '';
+
+if(isset($_GET['serial']) && $_GET['serial'] != null && $_GET['serial'] != ''){
+    $serial = (string)$_GET['serial'];
+}
 
 if(isset($_GET['product']) && $_GET['product'] != null && $_GET['product'] != ''){
     $productName = (string)$_GET['product'];
@@ -138,13 +143,14 @@ if(isset($_GET['date']) && $_GET['date'] != null && $_GET['date'] != ''){
                 <tr style="border: 1px solid #000000;">
                     <td style="width: 55%;border-top:0px;">
                         <p>
-                            <span style="font-size: 34px;font-family: sans-serif;font-weight: bold;">精牛原纸</span>
+                            <span style="font-size: 40px;font-family: sans-serif;font-weight: bold;">精牛原纸</span>
                         </p>
                     </td>
                     <td style="width: 45%;border-top:0px;">
                         <p>
-                            <span style="font-size: 16px;font-family: sans-serif;">口 合格证</span><br>
-                            <span style="font-size: 14px;font-family: sans-serif;">Quality Certificate</span>
+                            <span style="font-size: 18px;font-family: sans-serif;">口 合格证</span><br>
+                            <span style="font-size: 16px;font-family: sans-serif;">Quality Certificate</span><br>
+                            <span style="font-size: 16px;font-family: sans-serif;">(<?=$serial ?>)</span>
                         </p>
                     </td>
                 </tr>
@@ -189,31 +195,31 @@ if(isset($_GET['date']) && $_GET['date'] != null && $_GET['date'] != ''){
                     </td>
                     <td style="width: 45%;border-top:3px;">
                         <p>
-                            <span style="font-size: 20px;font-family: sans-serif;"><?=$basis_weight ?></span>
+                            <span style="font-size: 24px;font-family: sans-serif;"><?=$basis_weight ?></span>
                         </p>
                     </td>
                 </tr>
                 <tr style="border: 1px solid #000000;">
                     <td style="width: 55%;border-top:0px;">
                         <p>
-                            <span style="font-size: 20px;font-family: sans-serif;">宽度 WIDTH MM</span>
+                            <span style="font-size: 24px;font-family: sans-serif;">宽度 WIDTH MM</span>
                         </p>
                     </td>
                     <td style="width: 45%;border-top:0px;">
                         <p>
-                            <span style="font-size: 20px;font-family: sans-serif;">直径 DIAMETER MM</span>
+                            <span style="font-size: 24px;font-family: sans-serif;">直径 DIAMETER MM</span>
                         </p>
                     </td>
                 </tr>
                 <tr>
                     <td style="width: 55%;border-top:3px;">
                         <p>
-                            <span style="font-size: 20px;font-family: sans-serif;"><?=$width ?></span>
+                            <span style="font-size: 22px;font-family: sans-serif;"><?=$width ?></span>
                         </p>
                     </td>
                     <td style="width: 45%;border-top:3px;">
                         <p>
-                            <span style="font-size: 20pxs;font-family: sans-serif;"><?=$diameter ?></span>
+                            <span style="font-size: 22px;font-family: sans-serif;"><?=$diameter ?></span>
                         </p>
                     </td>
                 </tr>
@@ -228,12 +234,12 @@ if(isset($_GET['date']) && $_GET['date'] != null && $_GET['date'] != ''){
                 <tr style="border: 1px solid #000000;">
                     <td style="width: 55%;border-top:0px;">
                         <p>
-                            <span style="font-size: 20px;font-family: sans-serif;">质量 WEIGHT KG</span>
+                            <span style="font-size: 24px;font-family: sans-serif;">质量 WEIGHT KG</span>
                         </p>
                     </td>
                     <td style="width: 45%;border-top:0px;">
                         <p>
-                            <span style="font-size: 20px;font-family: sans-serif;">产品等级 PRODUCT CLASS</span>
+                            <span style="font-size: 24px;font-family: sans-serif;">产品等级 PRODUCT CLASS</span>
                         </p>
                     </td>
                 </tr>
@@ -246,7 +252,7 @@ if(isset($_GET['date']) && $_GET['date'] != null && $_GET['date'] != ''){
                     </td>
                     <td style="width: 45%;border-top:3px;">
                         <p>
-                            <span style="font-size: 20px;font-family: sans-serif;"><?=$class ?></span>
+                            <span style="font-size: 24px;font-family: sans-serif;"><?=$class ?></span>
                         </p>
                     </td>
                 </tr>

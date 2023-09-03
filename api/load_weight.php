@@ -14,6 +14,7 @@ $message = array();
 while($row = $result->fetch_assoc()){
 	$message[] = array( 
         "id"=>$row['id'],
+        "serial_no"=>$row['serial_no'],
         "status"=>$row['status'],
         "customer_name"=>$row['customer_name'],
         "supplier_name"=>$row['supplier_name'],
