@@ -3,9 +3,11 @@ require_once 'db_connect.php';
 
 $products = $db->query("SELECT * FROM products WHERE deleted = '0'");
 $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
+$suppliers = $db->query("SELECT * FROM supplies WHERE deleted = '0'");
 
 $data3 = array();
 $data5 = array();
+$data6 = array();
 
 while($row3=mysqli_fetch_assoc($products)){
     $data3[] = array( 
@@ -21,6 +23,13 @@ while($row5=mysqli_fetch_assoc($customers)){
     );
 }
 
+while($row6=mysqli_fetch_assoc($suppliers)){
+    $data6[] = array( 
+        'id'=>$row6['id'],
+        'supplier_name'=>$row6['supplier_name']
+    );
+}
+
 $db->close();
 
 echo json_encode(
@@ -28,6 +37,7 @@ echo json_encode(
         "status"=> "success", 
         "products"=> $data3, 
         "customers"=> $data5,
+        "supplies"=> $data6
     )
 );
 ?>
