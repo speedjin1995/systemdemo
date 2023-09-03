@@ -248,17 +248,6 @@
   </style>
 </head>
 
-<div class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1 class="m-0 text-dark">Weight Weighing</h1>
-      </div><!-- /.col -->
-    </div><!-- /.row -->
-  </div><!-- /.container-fluid -->
-</div>
-<!-- /.content-header -->
-
 <!-- Main content -->
 <div class="content">
   <div class="container-fluid">
@@ -335,11 +324,9 @@ $(function () {
       { data: 'weight' },
       { data: 'created_datetime' },
       { 
-        className: 'dt-control',
-        orderable: false,
-        data: null,
+        data: 'id',
         render: function ( data, type, row ) {
-          return '<td class="table-elipse" data-toggle="collapse" data-target="#demo'+row.serialNo+'"><i class="fas fa-angle-down"></i></td>';
+            return '<div class="row"><div class="col-3"><button type="button" id="print'+data+'" onclick="print('+data+')" class="btn btn-success btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
         }
       }
     ],
