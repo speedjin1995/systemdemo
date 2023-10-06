@@ -10,8 +10,8 @@ if(!isset($_SESSION['userID'])){
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 	$del = "1";
-	if ($stmt2 = $db->prepare("UPDATE currency SET deleted=? WHERE id=?")) {
-		$stmt2->bind_param('ss', $del , $id);
+	if ($stmt2 = $db->prepare("UPDATE racking SET deleted=? WHERE id=?")) {
+		$stmt2->bind_param('ss', $del, $id);
 		
 		if($stmt2->execute()){
 			$stmt2->close();

@@ -8,12 +8,13 @@ if(!isset($_SESSION['userID'])){
     echo 'window.location.href = "../login.html";</script>';
 }
 
-if(isset($_POST['units'])){
-    $lotsNumber = filter_input(INPUT_POST, 'units', FILTER_SANITIZE_STRING);
+if(isset($_POST['warehouse'], $_POST['rackNo'])){
+    $warehouse = filter_input(INPUT_POST, 'warehouse', FILTER_SANITIZE_STRING);
+    $rackNo = filter_input(INPUT_POST, 'rackNo', FILTER_SANITIZE_STRING);
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE units SET units=? WHERE id=?")) {
-            $update_stmt->bind_param('ss', $lotsNumber, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE racking SET warehouse=?, rack_number=? WHERE id=?")) {
+            $update_stmt->bind_param('sss', $warehouse, $rackNo, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -38,8 +39,8 @@ if(isset($_POST['units'])){
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO units (units) VALUES (?)")) {
-            $insert_stmt->bind_param('s', $lotsNumber);
+        if ($insert_stmt = $db->prepare("INSERT INTO racking (warehouse, rack_number) VALUES (?, ?)")) {
+            $insert_stmt->bind_param('ss', $warehouse, $rackNo);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

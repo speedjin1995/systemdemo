@@ -9,6 +9,7 @@ if(!isset($_SESSION['userID'])){
 }
 else{
   $user = $_SESSION['userID'];
+  $parent_product = $db->query("SELECT * FROM parent_product WHERE deleted = '0'");
 }
 ?>
 
@@ -75,12 +76,21 @@ else{
                   <input type="text" class="form-control" name="code" id="code" placeholder="Enter Product Code" maxlength="10" required>
                 </div>
                 <div class="form-group">
-                  <label for="product">Product Name *</label>
-                  <input type="text" class="form-control" name="product" id="product" placeholder="Enter Product Name" required>
+                  <label for="code">Product Parents *</label>
+                  <select class="form-control" id="productParents" name="productParents" style="width: 100%;">
+                        <option selected="selected">-</option>
+                        <?php while($rowProduct=mysqli_fetch_assoc($parent_product)){ ?>
+                            <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['name_en'] ?> - <?=$rowProduct['name_ch'] ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                  <label for="product">Product Name (EN) *</label>
+                  <input type="text" class="form-control" name="product" id="product" placeholder="Enter Product Name (EN)" required>
                 </div>
                 <div class="form-group"> 
-                  <label for="remark">Product Description </label>
-                  <textarea class="form-control" id="remark" name="remark" placeholder="Enter your remark"></textarea>
+                  <label for="remark">Product Name (CH) *</label>
+                  <input type="text" class="form-control" name="remark" id="remark" placeholder="Enter Product Name (CH)" required>
                 </div>
                 <div class="form-group">
                   <label for="product">Basis Weight *</label>
@@ -134,8 +144,7 @@ $(function () {
             }
         ],
         "rowCallback": function( row, data, index ) {
-
-            $('td', row).css('background-color', '#E6E6FA');
+            //$('td', row).css('background-color', '#E6E6FA');
         },        
     });
     
@@ -169,6 +178,7 @@ $(function () {
     $('#addProducts').on('click', function(){
         $('#addModal').find('#id').val("");
         $('#addModal').find('#code').val("");
+        $('#addModal').find('#productParents').val("");
         $('#addModal').find('#product').val("");
         $('#addModal').find('#remark').val("");
         $('#addModal').find('#basis').val("");
@@ -201,6 +211,7 @@ function edit(id){
         if(obj.status === 'success'){
             $('#addModal').find('#id').val(obj.message.id);
             $('#addModal').find('#code').val(obj.message.product_code);
+            $('#addModal').find('#productParents').val(obj.message.product_parents);
             $('#addModal').find('#product').val(obj.message.product_name);
             $('#addModal').find('#remark').val(obj.message.remark);
             $('#addModal').find('#basis').val(obj.message.basis_weight);

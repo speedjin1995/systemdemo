@@ -8,13 +8,17 @@ if(!isset($_SESSION['userID'])){
     echo 'window.location.href = "../login.html";</script>';
 }
 
-if(isset($_POST['status'], $_POST['prefix'])){
-    $lotsNumber = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_STRING);
-    $prefix = filter_input(INPUT_POST, 'prefix', FILTER_SANITIZE_STRING);
+if(isset($_POST['product'], $_POST['quantity'], $_POST['pickedBy'])){
+    $product = filter_input(INPUT_POST, 'product', FILTER_SANITIZE_STRING);
+    $quantity = filter_input(INPUT_POST, 'quantity', FILTER_SANITIZE_STRING);
+    $pickedBy = filter_input(INPUT_POST, 'pickedBy', FILTER_SANITIZE_STRING);
+    $user = $_SESSION['userID'];
+    $today = date("Y-m-d 00:00:00");
+    $createdDatetime = date("Y-m-d h:i:s");
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE `status` SET `status`=?, `prefix`=? WHERE id=?")) {
-            $update_stmt->bind_param('sss', $lotsNumber, $prefix, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE jobs SET product=?, pick_by=?, quantity=? WHERE id=?")) {
+            $update_stmt->bind_param('ssss', $product, $pickedBy, $quantity, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -39,24 +43,38 @@ if(isset($_POST['status'], $_POST['prefix'])){
         }
     }
     else{
-        $valuePre = "1";
+        $serialNo = 'J'.date("Ymd");
 
-        if ($insert_stmt2 = $db->prepare("INSERT INTO `miscellaneous` (`name`, `value`) VALUES (?, ?)")) {
-            $insert_stmt2->bind_param('ss', $lotsNumber, $valuePre);
-
-            if (! $insert_stmt2->execute()) {
+		if ($select_stmt = $db->prepare("SELECT COUNT(*) FROM jobs WHERE created_datetime >= ?")) {
+            $select_stmt->bind_param('s', $today);
+            
+            // Execute the prepared query.
+            if (! $select_stmt->execute()) {
                 echo json_encode(
                     array(
-                        "status"=> "failed", 
-                        "message"=> $insert_stmt2->error
-                    )
-                );
+                        "status" => "failed",
+                        "message" => "Failed to get latest count"
+                    )); 
             }
             else{
-                $last_id = mysqli_insert_id($db);
+                $result = $select_stmt->get_result();
+                $count = 1;
+                
+                if ($row = $result->fetch_assoc()) {
+                    $count = (int)$row['COUNT(*)'] + 1;
+                    $select_stmt->close();
+                }
 
-                if ($insert_stmt = $db->prepare("INSERT INTO `status` (`status`, `prefix`, `misc_id`) VALUES (?, ?, ?)")) {
-                    $insert_stmt->bind_param('sss', $lotsNumber, $prefix, $last_id);
+                $charSize = strlen(strval($count));
+
+                for($i=0; $i<(4-(int)$charSize); $i++){
+                    $serialNo.='0';  // S0000
+                }
+        
+                $serialNo .= strval($count);  //S00009
+
+                if ($insert_stmt = $db->prepare("INSERT INTO jobs (job_no, product, pick_by, quantity, created_by, created_datetime) VALUES (?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('ssssss', $serialNo, $product, $pickedBy, $quantity, $user, $createdDatetime);
                     
                     // Execute the prepared query.
                     if (! $insert_stmt->execute()) {
@@ -79,25 +97,8 @@ if(isset($_POST['status'], $_POST['prefix'])){
                         );
                     }
                 }
-                else{
-                    echo json_encode(
-                        array(
-                            "status"=> "failed", 
-                            "message"=> "Something goes wrong when create status"
-                        )
-                    );
-                }
-            }
-        }
-        else{
-            echo json_encode(
-                array(
-                    "status"=> "failed", 
-                    "message"=> "Something goes wrong when create prefixes"
-                )
-            );
-        }
-        
+			}
+		}
     }
 }
 else{

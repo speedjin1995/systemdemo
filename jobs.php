@@ -9,40 +9,45 @@ if(!isset($_SESSION['userID'])){
 }
 else{
   $user = $_SESSION['userID'];
+  $products = $db->query("SELECT * FROM products WHERE deleted = '0'");
+  $users = $db->query("SELECT * FROM `users` WHERE deleted = '0'");
 }
 ?>
 
 <div class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
+  <div class="container-fluid">
+    <div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Drivers</h1>
+				<h1 class="m-0 text-dark">Job Monitoring</h1>
 			</div><!-- /.col -->
-        </div><!-- /.row -->
-    </div><!-- /.container-fluid -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
 </div>
 <!-- /.content-header -->
 
 <!-- Main content -->
 <section class="content">
 	<div class="container-fluid">
-        <div class="row">
+    <div class="row">
 			<div class="col-12">
 				<div class="card">
 					<div class="card-header">
-                        <div class="row">
-                            <div class="col-9"></div>
-                            <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addTransporter">Add Transporter</button>
-                            </div>
-                        </div>
-                    </div>
+            <div class="row">
+              <div class="col-9"></div>
+              <div class="col-3">
+                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addProducts">Add Jobs</button>
+              </div>
+            </div>
+          </div>
 					<div class="card-body">
-						<table id="transporterTable" class="table table-bordered table-striped">
+						<table id="productTable" class="table table-bordered table-striped">
 							<thead>
 								<tr>
-                                    <th>Code</th>
-									<th>Driver</th>
+                  <th>Job No.</th>
+									<th>Product</th>
+                  <th>Quantity</th>
+                  <th>Picked By</th>
+                  <th>Status</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -57,9 +62,9 @@ else{
 <div class="modal fade" id="addModal">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
-        <form role="form" id="transporterForm">
+        <form role="form" id="productForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Transporter</h4>
+              <h4 class="modal-title">Add Jobs</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -70,12 +75,26 @@ else{
                   <input type="hidden" class="form-control" id="id" name="id">
                 </div>
                 <div class="form-group">
-                  <label for="code">Driver Code *</label>
-                  <input type="text" class="form-control" name="code" id="code" placeholder="Enter Transporter Code" maxlength="10" required>
+                  <label for="product">Product *</label>
+                  <select class="form-control" id="product" name="product" style="width: 100%;">
+                    <option selected="selected">-</option>
+                    <?php while($rowProduct=mysqli_fetch_assoc($products)){ ?>
+                        <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['product_name'] ?></option>
+                    <?php } ?>
+                  </select>
                 </div>
                 <div class="form-group">
-                  <label for="transporter">Driver Name *</label>
-                  <input type="text" class="form-control" name="transporter" id="transporter" placeholder="Enter Transporter Name" required>
+                  <label for="code">Quantity *</label>
+                  <input type="number" class="form-control" name="quantity" id="quantity" placeholder="Enter Quantity" required>
+                </div>
+                <div class="form-group"> 
+                  <label for="remark">Picked By *</label>
+                  <select class="form-control" id="pickedBy" name="pickedBy" style="width: 100%;">
+                    <option selected="selected">-</option>
+                    <?php while($rowUsers=mysqli_fetch_assoc($users)){ ?>
+                        <option value="<?=$rowUsers['id'] ?>"><?=$rowUsers['name'] ?></option>
+                    <?php } ?>
+                  </select>
                 </div>
               </div>
             </div>
@@ -92,18 +111,23 @@ else{
 
 <script>
 $(function () {
-    $("#transporterTable").DataTable({
+    $("#productTable").DataTable({
         "responsive": true,
         "autoWidth": false,
         'processing': true,
         'serverSide': true,
         'serverMethod': 'post',
+        'order': [[ 1, 'asc' ]],
+        'columnDefs': [ { orderable: false, targets: [0] }],
         'ajax': {
-            'url':'php/loadTransporter.php'
+            'url':'php/loadJobs.php'
         },
         'columns': [
-            { data: 'transporter_code' },
-            { data: 'transporter_name' },
+            { data: 'job_no' },
+            { data: 'product_name' },
+            { data: 'quantity' },
+            { data: 'name' },
+            { data: 'status' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -113,21 +137,21 @@ $(function () {
         ],
         "rowCallback": function( row, data, index ) {
 
-            $('td', row).css('background-color', '#E6E6FA');
+            //$('td', row).css('background-color', '#E6E6FA');
         },        
     });
     
     $.validator.setDefaults({
         submitHandler: function () {
             $('#spinnerLoading').show();
-            $.post('php/transporter.php', $('#transporterForm').serialize(), function(data){
+            $.post('php/jobs.php', $('#productForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
                 
                 if(obj.status === 'success'){
                     $('#addModal').modal('hide');
                     toastr["success"](obj.message, "Success:");
                     
-                    $.get('transport.php', function(data) {
+                    $.get('jobs.php', function(data) {
                         $('#mainContents').html(data);
                         $('#spinnerLoading').hide();
                     });
@@ -144,13 +168,14 @@ $(function () {
         }
     });
 
-    $('#addTransporter').on('click', function(){
+    $('#addProducts').on('click', function(){
         $('#addModal').find('#id').val("");
-        $('#addModal').find('#code').val("");
-        $('#addModal').find('#transporter').val("");
+        $('#addModal').find('#product').val("");
+        $('#addModal').find('#quantity').val("");
+        $('#addModal').find('#pickedBy').val("");
         $('#addModal').modal('show');
         
-        $('#transporterForm').validate({
+        $('#productForm').validate({
             errorElement: 'span',
             errorPlacement: function (error, element) {
                 error.addClass('invalid-feedback');
@@ -168,28 +193,29 @@ $(function () {
 
 function edit(id){
     $('#spinnerLoading').show();
-    $.post('php/getTransporter.php', {userID: id}, function(data){
+    $.post('php/getJob.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
-            $('#addModal').find('#id').val(obj.message.id);
-            $('#addModal').find('#code').val(obj.message.transporter_code);
-            $('#addModal').find('#transporter').val(obj.message.transporter_name);
-            $('#addModal').modal('show');
-            
-            $('#transporterForm').validate({
-                errorElement: 'span',
-                errorPlacement: function (error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-group').append(error);
-                },
-                highlight: function (element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function (element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                }
-            });
+          $('#addModal').find('#id').val(obj.message.id);
+          $('#addModal').find('#product').val(obj.message.product);
+          $('#addModal').find('#quantity').val(obj.message.quantity);
+          $('#addModal').find('#pickedBy').val(obj.message.pick_by);
+          $('#addModal').modal('show');
+          
+          $('#productForm').validate({
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+              error.addClass('invalid-feedback');
+              element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+              $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+              $(element).removeClass('is-invalid');
+            }
+          });
         }
         else if(obj.status === 'failed'){
             toastr["error"](obj.message, "Failed:");
@@ -203,12 +229,12 @@ function edit(id){
 
 function deactivate(id){
     $('#spinnerLoading').show();
-    $.post('php/deleteTransporter.php', {userID: id}, function(data){
+    $.post('php/deleteJobs.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
             toastr["success"](obj.message, "Success:");
-            $.get('transport.php', function(data) {
+            $.get('jobs.php', function(data) {
                 $('#mainContents').html(data);
                 $('#spinnerLoading').hide();
             });

@@ -6,7 +6,7 @@ session_start();
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 
-    if ($update_stmt = $db->prepare("SELECT * FROM currency WHERE id=?")) {
+    if ($update_stmt = $db->prepare("SELECT * FROM parent_product WHERE id=?")) {
         $update_stmt->bind_param('s', $id);
         
         // Execute the prepared query.
@@ -23,9 +23,8 @@ if(isset($_POST['userID'])){
             
             while ($row = $result->fetch_assoc()) {
                 $message['id'] = $row['id'];
-                $message['currency'] = $row['currency'];
-                $message['description'] = $row['description'];
-                $message['rate'] = $row['rate'];
+                $message['name_en'] = $row['name_en'];
+                $message['name_ch'] = $row['name_ch'];
             }
             
             echo json_encode(

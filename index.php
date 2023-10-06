@@ -325,18 +325,31 @@ to get the desired effect
         <ul class="nav nav-pills nav-sidebar flex-column" id="sideMenu" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
             with font-awesome or any other icon font library -->
-          <li class="nav-item">
-            <a href="#weight" data-file="weightPage.php" class="nav-link link">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>Weight Weighing</p>
-            </a>
-          </li>
           <!--li class="nav-item">
             <a href="#dashboard" data-file="dashboard.php" class="nav-link link">
               <i class="nav-icon fas fa-user"></i>
               <p>Dashboard</p>
             </a>
           </li-->
+          <li class="nav-item">
+            <a href="#weight" data-file="weightPage.php" class="nav-link link">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>Weight Weighing</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#jobs" data-file="jobs.php" class="nav-link link">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>Job Monitoring</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#inventory" data-file="inventory.php" class="nav-link link">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>Inventory</p>
+            </a>
+          </li>
+          
           <!--li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -382,17 +395,35 @@ to get the desired effect
                       <i class="nav-icon fas fa-book"></i>
                       <p>Customers</p>
                     </a>
-                  </li>
-                  <li class="nav-item">
+                  </li>';
+                  /*<li class="nav-item">
                     <a href="#suppliers" data-file="suppliers.php" class="nav-link link">
                       <i class="nav-icon fas fa-industry"></i>
                       <p>Suppliers</p>
+                    </a>
+                  </li>*/
+                  echo '<li class="nav-item">
+                    <a href="#parent" data-file="parent.php" class="nav-link link">
+                      <i class="nav-icon fas fa-list-alt"></i>
+                      <p>Parent Products</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="#products" data-file="products.php" class="nav-link link">
                       <i class="nav-icon fas fa-shopping-cart"></i>
                       <p>Products</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#warehouse" data-file="warehouse.php" class="nav-link link">
+                      <i class="nav-icon fas fa-store"></i>
+                      <p>Warehouse</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#racking" data-file="racking.php" class="nav-link link">
+                      <i class="nav-icon fas fa-inventory"></i>
+                      <p>Racking</p>
                     </a>
                   </li>
                 </ul>

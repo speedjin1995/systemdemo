@@ -8,14 +8,13 @@ if(!isset($_SESSION['userID'])){
     echo 'window.location.href = "../login.html";</script>';
 }
 
-if(isset($_POST['units'], $_POST['desc'], $_POST['rate'])){
-    $lotsNumber = filter_input(INPUT_POST, 'units', FILTER_SANITIZE_STRING);
-    $desc = filter_input(INPUT_POST, 'desc', FILTER_SANITIZE_STRING);
-    $rate = filter_input(INPUT_POST, 'rate', FILTER_SANITIZE_STRING);
+if(isset($_POST['product'], $_POST['productName'])){
+    $product = filter_input(INPUT_POST, 'product', FILTER_SANITIZE_STRING);
+    $productName = filter_input(INPUT_POST, 'productName', FILTER_SANITIZE_STRING);
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE currency SET currency=?, description=?, rate=? WHERE id=?")) {
-            $update_stmt->bind_param('ssss', $lotsNumber, $desc, $rate, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE parent_product SET name_en=?, name_ch=? WHERE id=?")) {
+            $update_stmt->bind_param('sss', $product, $productName, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -40,8 +39,8 @@ if(isset($_POST['units'], $_POST['desc'], $_POST['rate'])){
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO currency (currency, description, rate) VALUES (?, ?, ?)")) {
-            $insert_stmt->bind_param('sss', $lotsNumber, $desc, $rate);
+        if ($insert_stmt = $db->prepare("INSERT INTO parent_product (name_en, name_ch) VALUES (?, ?)")) {
+            $insert_stmt->bind_param('ss', $product, $productName);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

@@ -9,6 +9,7 @@ if(!isset($_SESSION['userID'])){
 }
 else{
   $user = $_SESSION['userID'];
+  $warehouse = $db->query("SELECT * FROM warehouse WHERE deleted = '0'");
 }
 ?>
 
@@ -16,7 +17,7 @@ else{
     <div class="container-fluid">
         <div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Grades</h1>
+				<h1 class="m-0 text-dark">Racking</h1>
 			</div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -33,16 +34,17 @@ else{
                         <div class="row">
                             <div class="col-9"></div>
                             <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addUnits">Add Units</button>
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addVehicles">Add Racking</button>
                             </div>
                         </div>
                     </div>
 					<div class="card-body">
-						<table id="unitTable" class="table table-bordered table-striped">
+						<table id="vehicleTable" class="table table-bordered table-striped">
 							<thead>
 								<tr>
 									<th>No.</th>
-									<th>Grades</th>
+                                    <th>Warehouse</th>
+									<th>Rack No</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -54,12 +56,12 @@ else{
 	</div><!-- /.container-fluid -->
 </section><!-- /.content -->
 
-<div class="modal fade" id="unitModal">
+<div class="modal fade" id="vehicleModal">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
-        <form role="form" id="unitForm">
+        <form role="form" id="vehicleForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Grades</h4>
+              <h4 class="modal-title">Add Rack</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -69,15 +71,24 @@ else{
                     <div class="form-group">
     					<input type="hidden" class="form-control" id="id" name="id">
     				</div>
+                    <div class="form-group">
+                        <label for="code">Warehouse *</label>
+                        <select class="form-control" id="warehouse" name="warehouse" style="width: 100%;">
+                            <option selected="selected">-</option>
+                            <?php while($rowProduct=mysqli_fetch_assoc($warehouse)){ ?>
+                                <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['warehouse'] ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
     				<div class="form-group">
-    					<label for="units">Grades *</label>
-    					<input type="text" class="form-control" name="units" id="units" placeholder="Enter Units" required>
+    					<label for="rackNo">Rack No. *</label>
+    					<input type="text" class="form-control" name="rackNo" id="rackNo" placeholder="Enter Rack" required>
     				</div>
     			</div>
             </div>
             <div class="modal-footer justify-content-between">
               <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary" name="submit" id="submitLot">Submit</button>
+              <button type="submit" class="btn btn-primary" name="submit" id="submitVehicle">Submit</button>
             </div>
         </form>
       </div>
@@ -88,7 +99,7 @@ else{
 
 <script>
 $(function () {
-    $("#unitTable").DataTable({
+    $("#vehicleTable").DataTable({
         "responsive": true,
         "autoWidth": false,
         'processing': true,
@@ -97,11 +108,12 @@ $(function () {
         'order': [[ 1, 'asc' ]],
         'columnDefs': [ { orderable: false, targets: [0] }],
         'ajax': {
-            'url':'php/loadUnits.php'
+            'url':'php/loadRacking.php'
         },
         'columns': [
             { data: 'counter' },
-            { data: 'units' },
+            { data: 'warehouse' },
+            { data: 'rack_number' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -111,21 +123,21 @@ $(function () {
         ],
         "rowCallback": function( row, data, index ) {
 
-            $('td', row).css('background-color', '#E6E6FA');
+            //$('td', row).css('background-color', '#E6E6FA');
         },
     });
     
     $.validator.setDefaults({
         submitHandler: function () {
             $('#spinnerLoading').show();
-            $.post('php/units.php', $('#unitForm').serialize(), function(data){
+            $.post('php/racking.php', $('#vehicleForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
                 
                 if(obj.status === 'success'){
-                    $('#unitModal').modal('hide');
+                    $('#vehicleModal').modal('hide');
                     toastr["success"](obj.message, "Success:");
                     
-                    $.get('units.php', function(data) {
+                    $.get('racking.php', function(data) {
                         $('#mainContents').html(data);
                         $('#spinnerLoading').hide();
                     });
@@ -142,12 +154,13 @@ $(function () {
         }
     });
 
-    $('#addUnits').on('click', function(){
-        $('#unitModal').find('#id').val("");
-        $('#unitModal').find('#units').val("");
-        $('#unitModal').modal('show');
+    $('#addVehicles').on('click', function(){
+        $('#vehicleModal').find('#id').val("");
+        $('#vehicleModal').find('#warehouse').val("");
+        $('#vehicleModal').find('#rackNo').val("");
+        $('#vehicleModal').modal('show');
         
-        $('#unitForm').validate({
+        $('#vehicleForm').validate({
             errorElement: 'span',
             errorPlacement: function (error, element) {
                 error.addClass('invalid-feedback');
@@ -165,15 +178,16 @@ $(function () {
 
 function edit(id){
     $('#spinnerLoading').show();
-    $.post('php/getUnits.php', {userID: id}, function(data){
+    $.post('php/getRacking.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
-            $('#unitModal').find('#id').val(obj.message.id);
-            $('#unitModal').find('#units').val(obj.message.units);
-            $('#unitModal').modal('show');
+            $('#vehicleModal').find('#id').val(obj.message.id);
+            $('#vehicleModal').find('#warehouse').val(obj.message.warehouse);
+            $('#vehicleModal').find('#rackNo').val(obj.message.rack_number);
+            $('#vehicleModal').modal('show');
             
-            $('#unitForm').validate({
+            $('#vehicleForm').validate({
                 errorElement: 'span',
                 errorPlacement: function (error, element) {
                     error.addClass('invalid-feedback');
@@ -199,12 +213,12 @@ function edit(id){
 
 function deactivate(id){
     $('#spinnerLoading').show();
-    $.post('php/deleteUnit.php', {userID: id}, function(data){
+    $.post('php/deleteRacking.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
             toastr["success"](obj.message, "Success:");
-            $.get('units.php', function(data) {
+            $.get('racking.php', function(data) {
                 $('#mainContents').html(data);
                 $('#spinnerLoading').hide();
             });

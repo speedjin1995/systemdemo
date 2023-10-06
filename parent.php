@@ -16,7 +16,7 @@ else{
     <div class="container-fluid">
         <div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Vehicles</h1>
+				<h1 class="m-0 text-dark">Products</h1>
 			</div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -33,16 +33,17 @@ else{
                         <div class="row">
                             <div class="col-9"></div>
                             <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addVehicles">Add Vehicles</button>
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addProducts">Add Products</button>
                             </div>
                         </div>
                     </div>
 					<div class="card-body">
-						<table id="vehicleTable" class="table table-bordered table-striped">
+						<table id="productTable" class="table table-bordered table-striped">
 							<thead>
 								<tr>
-									<th>No.</th>
-									<th>Vehicle No</th>
+                                    <th>No.</th>
+									<th>Product Name (EN)</th>
+                                    <th>Product Name (CH)</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -54,30 +55,34 @@ else{
 	</div><!-- /.container-fluid -->
 </section><!-- /.content -->
 
-<div class="modal fade" id="vehicleModal">
+<div class="modal fade" id="addModal">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
-        <form role="form" id="vehicleForm">
+        <form role="form" id="productForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Vehicles</h4>
+              <h4 class="modal-title">Add Parent Products</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-                <div class="card-body">
-                    <div class="form-group">
-    					<input type="hidden" class="form-control" id="id" name="id">
-    				</div>
-    				<div class="form-group">
-    					<label for="vehicleNumber">Vehicles No. *</label>
-    					<input type="type" class="form-control" name="vehicleNumber" id="vehicleNumber" placeholder="Enter Vehicle Number" required>
-    				</div>
-    			</div>
+              <div class="card-body">
+                <div class="form-group">
+                  <input type="hidden" class="form-control" id="id" name="id">
+                </div>
+                <div class="form-group">
+                  <label for="product">Product Name (EN) *</label>
+                  <input type="text" class="form-control" name="product" id="product" placeholder="Enter Product Name" required>
+                </div>
+                <div class="form-group"> 
+                  <label for="remark">Product Name (CH) *</label>
+                  <input type="text" class="form-control" name="productName" id="productName" placeholder="Enter Product Name" required>
+                </div>
+              </div>
             </div>
             <div class="modal-footer justify-content-between">
               <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary" name="submit" id="submitVehicle">Submit</button>
+              <button type="submit" class="btn btn-primary" name="submit" id="submitMember">Submit</button>
             </div>
         </form>
       </div>
@@ -88,7 +93,7 @@ else{
 
 <script>
 $(function () {
-    $("#vehicleTable").DataTable({
+    $("#productTable").DataTable({
         "responsive": true,
         "autoWidth": false,
         'processing': true,
@@ -97,11 +102,12 @@ $(function () {
         'order': [[ 1, 'asc' ]],
         'columnDefs': [ { orderable: false, targets: [0] }],
         'ajax': {
-            'url':'php/loadVehicles.php'
+            'url':'php/loadParentProducts.php'
         },
         'columns': [
             { data: 'counter' },
-            { data: 'veh_number' },
+            { data: 'name_en' },
+            { data: 'name_ch' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -111,21 +117,21 @@ $(function () {
         ],
         "rowCallback": function( row, data, index ) {
 
-            $('td', row).css('background-color', '#E6E6FA');
-        },
+            //$('td', row).css('background-color', '#E6E6FA');
+        },        
     });
     
     $.validator.setDefaults({
         submitHandler: function () {
             $('#spinnerLoading').show();
-            $.post('php/vehicles.php', $('#vehicleForm').serialize(), function(data){
+            $.post('php/parentProducts.php', $('#productForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
                 
                 if(obj.status === 'success'){
-                    $('#vehicleModal').modal('hide');
+                    $('#addModal').modal('hide');
                     toastr["success"](obj.message, "Success:");
                     
-                    $.get('vehicles.php', function(data) {
+                    $.get('parent.php', function(data) {
                         $('#mainContents').html(data);
                         $('#spinnerLoading').hide();
                     });
@@ -142,12 +148,13 @@ $(function () {
         }
     });
 
-    $('#addVehicles').on('click', function(){
-        $('#vehicleModal').find('#id').val("");
-        $('#vehicleModal').find('#vehicleNumber').val("");
-        $('#vehicleModal').modal('show');
+    $('#addProducts').on('click', function(){
+        $('#addModal').find('#id').val("");
+        $('#addModal').find('#product').val("");
+        $('#addModal').find('#productName').val("");
+        $('#addModal').modal('show');
         
-        $('#vehicleForm').validate({
+        $('#productForm').validate({
             errorElement: 'span',
             errorPlacement: function (error, element) {
                 error.addClass('invalid-feedback');
@@ -165,15 +172,16 @@ $(function () {
 
 function edit(id){
     $('#spinnerLoading').show();
-    $.post('php/getVehicles.php', {userID: id}, function(data){
+    $.post('php/getParentProduct.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
-            $('#vehicleModal').find('#id').val(obj.message.id);
-            $('#vehicleModal').find('#vehicleNumber').val(obj.message.veh_number);
-            $('#vehicleModal').modal('show');
+            $('#addModal').find('#id').val(obj.message.id);
+            $('#addModal').find('#product').val(obj.message.name_en);
+            $('#addModal').find('#productName').val(obj.message.name_ch);
+            $('#addModal').modal('show');
             
-            $('#vehicleForm').validate({
+            $('#productForm').validate({
                 errorElement: 'span',
                 errorPlacement: function (error, element) {
                     error.addClass('invalid-feedback');
@@ -199,12 +207,12 @@ function edit(id){
 
 function deactivate(id){
     $('#spinnerLoading').show();
-    $.post('php/deleteVehicle.php', {userID: id}, function(data){
+    $.post('php/deleteParentProduct.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
             toastr["success"](obj.message, "Success:");
-            $.get('vehicles.php', function(data) {
+            $.get('parent.php', function(data) {
                 $('#mainContents').html(data);
                 $('#spinnerLoading').hide();
             });

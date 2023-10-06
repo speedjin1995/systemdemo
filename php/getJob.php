@@ -6,7 +6,7 @@ session_start();
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 
-    if ($update_stmt = $db->prepare("SELECT * FROM status WHERE id=?")) {
+    if ($update_stmt = $db->prepare("SELECT * FROM jobs WHERE id=?")) {
         $update_stmt->bind_param('s', $id);
         
         // Execute the prepared query.
@@ -23,8 +23,9 @@ if(isset($_POST['userID'])){
             
             while ($row = $result->fetch_assoc()) {
                 $message['id'] = $row['id'];
-                $message['status'] = $row['status'];
-                $message['prefix'] = $row['prefix'];
+                $message['product'] = $row['product'];
+                $message['pick_by'] = $row['pick_by'];
+                $message['quantity'] = $row['quantity'];
             }
             
             echo json_encode(

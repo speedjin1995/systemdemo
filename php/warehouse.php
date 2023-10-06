@@ -8,12 +8,12 @@ if(!isset($_SESSION['userID'])){
     echo 'window.location.href = "../login.html";</script>';
 }
 
-if(isset($_POST['vehicleNumber'])){
-    $vehicleNumber = filter_input(INPUT_POST, 'vehicleNumber', FILTER_SANITIZE_STRING);
+if(isset($_POST['warehouse'])){
+    $lotsNumber = filter_input(INPUT_POST, 'warehouse', FILTER_SANITIZE_STRING);
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE vehicles SET veh_number=? WHERE id=?")) {
-            $update_stmt->bind_param('ss', $vehicleNumber, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE `warehouse` SET `warehouse`=? WHERE id=?")) {
+            $update_stmt->bind_param('ss', $lotsNumber, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -38,8 +38,8 @@ if(isset($_POST['vehicleNumber'])){
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO vehicles (veh_number) VALUES (?)")) {
-            $insert_stmt->bind_param('s', $vehicleNumber);
+        if ($insert_stmt = $db->prepare("INSERT INTO `warehouse` (`warehouse`) VALUES (?)")) {
+            $insert_stmt->bind_param('s', $lotsNumber);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {
@@ -61,6 +61,14 @@ if(isset($_POST['vehicleNumber'])){
                     )
                 );
             }
+        }
+        else{
+            echo json_encode(
+                array(
+                    "status"=> "failed", 
+                    "message"=> "Something goes wrong when create status"
+                )
+            );
         }
     }
 }

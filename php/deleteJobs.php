@@ -10,11 +10,11 @@ if(!isset($_SESSION['userID'])){
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 	$del = "1";
-	if ($update_stmt = $db->prepare("UPDATE status SET deleted=? WHERE id=?")) {
-		$update_stmt->bind_param('ss', $del , $id);
+	if ($stmt2 = $db->prepare("UPDATE jobs SET deleted=? WHERE id=?")) {
+		$stmt2->bind_param('ss', $del , $id);
 		
-		if($update_stmt->execute()){
-			$update_stmt->close();
+		if($stmt2->execute()){
+			$stmt2->close();
 			$db->close();
 			
 			echo json_encode(
@@ -27,7 +27,7 @@ if(isset($_POST['userID'])){
 		    echo json_encode(
     	        array(
     	            "status"=> "failed", 
-    	            "message"=> $update_stmt->error
+    	            "message"=> $stmt2->error
     	        )
     	    );
 		}

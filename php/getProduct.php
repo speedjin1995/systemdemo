@@ -30,6 +30,7 @@ if(isset($_POST['userID'])){
                 $message['width'] = $row['width'];
                 $message['diameter'] = $row['diameter'];
                 $message['class'] = $row['class'];
+                $message['product_parents'] = $row['product_parents'];
             }
             
             echo json_encode(

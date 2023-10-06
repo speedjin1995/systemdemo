@@ -6,7 +6,7 @@ session_start();
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 
-    if ($update_stmt = $db->prepare("SELECT * FROM vehicles WHERE id=?")) {
+    if ($update_stmt = $db->prepare("SELECT * FROM racking WHERE id=?")) {
         $update_stmt->bind_param('s', $id);
         
         // Execute the prepared query.
@@ -23,7 +23,8 @@ if(isset($_POST['userID'])){
             
             while ($row = $result->fetch_assoc()) {
                 $message['id'] = $row['id'];
-                $message['veh_number'] = $row['veh_number'];
+                $message['warehouse'] = $row['warehouse'];
+                $message['rack_number'] = $row['rack_number'];
             }
             
             echo json_encode(
