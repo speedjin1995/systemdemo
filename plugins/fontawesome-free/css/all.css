@@ -2331,6 +2331,9 @@ readers do not read off random characters that represent icons */
 .fa-invision:before {
   content: "\f7b0"; }
 
+.fa-inventory:before {
+  content: "\f480"; }
+
 .fa-ioxhost:before {
   content: "\f208"; }
 

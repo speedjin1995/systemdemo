@@ -339,13 +339,13 @@ to get the desired effect
           </li>
           <li class="nav-item">
             <a href="#jobs" data-file="jobs.php" class="nav-link link">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <i class="nav-icon fas fa-box"></i>
               <p>Job Monitoring</p>
             </a>
           </li>
           <li class="nav-item">
             <a href="#inventory" data-file="inventory.php" class="nav-link link">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <i class="nav-icon fas fa-boxes"></i>
               <p>Inventory</p>
             </a>
           </li>
@@ -416,13 +416,13 @@ to get the desired effect
                   </li>
                   <li class="nav-item">
                     <a href="#warehouse" data-file="warehouse.php" class="nav-link link">
-                      <i class="nav-icon fas fa-store"></i>
+                      <i class="nav-icon fas fa-warehouse"></i>
                       <p>Warehouse</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="#racking" data-file="racking.php" class="nav-link link">
-                      <i class="nav-icon fas fa-inventory"></i>
+                      <i class="nav-icon fas fa-pallet"></i>
                       <p>Racking</p>
                     </a>
                   </li>
