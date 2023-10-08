@@ -270,6 +270,21 @@ else{
       -o-animation: uil-ring-anim 1s linear infinite;
       animation: uil-ring-anim 1s linear infinite;
     }
+
+    #barcodeScan {
+      background-color: #f4f6f9;
+      color: #f4f6f9;
+      border: none;
+    }
+
+    #barcodeScan:focus {
+      outline: none;
+    }
+
+    .tab-label {
+      display: flex;
+      justify-content:center;
+    }
   </style>
 </head>
 <!--
