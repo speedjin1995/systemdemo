@@ -8,7 +8,8 @@ if(!isset($_SESSION['userID'])){
     echo 'window.location.href = "../login.html";</script>';
 }
 
-if(isset($_POST['product'], $_POST['quantity'], $_POST['pickedBy'])){
+if(isset($_POST['customers'], $_POST['product'], $_POST['quantity'], $_POST['pickedBy'])){
+    $customers = filter_input(INPUT_POST, 'customers', FILTER_SANITIZE_STRING);
     $product = filter_input(INPUT_POST, 'product', FILTER_SANITIZE_STRING);
     $quantity = filter_input(INPUT_POST, 'quantity', FILTER_SANITIZE_STRING);
     $pickedBy = filter_input(INPUT_POST, 'pickedBy', FILTER_SANITIZE_STRING);
@@ -17,8 +18,8 @@ if(isset($_POST['product'], $_POST['quantity'], $_POST['pickedBy'])){
     $createdDatetime = date("Y-m-d h:i:s");
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE jobs SET product=?, pick_by=?, quantity=? WHERE id=?")) {
-            $update_stmt->bind_param('ssss', $product, $pickedBy, $quantity, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE jobs SET customer=?, product=?, pick_by=?, quantity=? WHERE id=?")) {
+            $update_stmt->bind_param('sssss', $customers, $product, $pickedBy, $quantity, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -73,8 +74,8 @@ if(isset($_POST['product'], $_POST['quantity'], $_POST['pickedBy'])){
         
                 $serialNo .= strval($count);  //S00009
 
-                if ($insert_stmt = $db->prepare("INSERT INTO jobs (job_no, product, pick_by, quantity, created_by, created_datetime) VALUES (?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('ssssss', $serialNo, $product, $pickedBy, $quantity, $user, $createdDatetime);
+                if ($insert_stmt = $db->prepare("INSERT INTO jobs (job_no, customer, product, pick_by, quantity, created_by, created_datetime) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('sssssss', $serialNo, $customers, $product, $pickedBy, $quantity, $user, $createdDatetime);
                     
                     // Execute the prepared query.
                     if (! $insert_stmt->execute()) {

@@ -150,7 +150,7 @@ else{
               <thead>
                 <tr>
                   <th>No</th>
-                  <th>Customers</th>
+                  <!--th>Customers</th-->
                   <th>Product</th>
                   <th>Weight</th>
                   <th>Created <br>Date & Time</th>
@@ -191,7 +191,7 @@ $(function () {
     },
     'columns': [
       { data: 'no' },
-      { data: 'customer_name' },
+      //{ data: 'customer_name' },
       { data: 'product' },
       { data: 'weight' },
       { data: 'created_datetime' },

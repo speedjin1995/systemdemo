@@ -28,8 +28,9 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select jobs.id, jobs.job_no, products.product_name, users.name, jobs.quantity, jobs.status, jobs.created_datetime 
-from jobs, products, users WHERE jobs.deleted = '0' AND products.id = jobs.product AND users.id = jobs.pick_by".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select jobs.id, jobs.job_no, customers.customer_name, products.product_name, users.name, jobs.quantity, jobs.status, jobs.created_datetime 
+from jobs, products, users, customers WHERE jobs.deleted = '0' AND products.id = jobs.product AND users.id = jobs.pick_by AND customers.id = jobs.customer
+".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
@@ -37,6 +38,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
     $data[] = array( 
       "id"=>$row['id'],
       "job_no"=>$row['job_no'],
+      "customer_name"=>$row['customer_name'],
       "product_name"=>$row['product_name'],
       "name"=>$row['name'],
       "quantity"=>$row['quantity'],

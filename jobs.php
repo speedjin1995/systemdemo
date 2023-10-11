@@ -10,6 +10,7 @@ if(!isset($_SESSION['userID'])){
 else{
   $user = $_SESSION['userID'];
   $products = $db->query("SELECT * FROM products WHERE deleted = '0'");
+  $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
   $users = $db->query("SELECT * FROM `users` WHERE deleted = '0'");
 }
 ?>
@@ -44,6 +45,7 @@ else{
 							<thead>
 								<tr>
                   <th>Job No.</th>
+                  <th>Customer</th>
 									<th>Product</th>
                   <th>Quantity</th>
                   <th>Picked By</th>
@@ -75,11 +77,20 @@ else{
                   <input type="hidden" class="form-control" id="id" name="id">
                 </div>
                 <div class="form-group">
+                  <label for="customers">Customers *</label>
+                  <select class="form-control" id="customers" name="customers" style="width: 100%;">
+                    <option selected="selected">-</option>
+                    <?php while($rowCustomer=mysqli_fetch_assoc($customers)){ ?>
+                      <option value="<?=$rowCustomer['id'] ?>"><?=$rowCustomer['customer_name'] ?></option>
+                    <?php } ?>
+                  </select>
+                </div>
+                <div class="form-group">
                   <label for="product">Product *</label>
                   <select class="form-control" id="product" name="product" style="width: 100%;">
                     <option selected="selected">-</option>
                     <?php while($rowProduct=mysqli_fetch_assoc($products)){ ?>
-                        <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['product_name'] ?></option>
+                      <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['product_name'] ?></option>
                     <?php } ?>
                   </select>
                 </div>
@@ -124,6 +135,7 @@ $(function () {
         },
         'columns': [
             { data: 'job_no' },
+            { data: 'customer_name' },
             { data: 'product_name' },
             { data: 'quantity' },
             { data: 'name' },
@@ -170,6 +182,7 @@ $(function () {
 
     $('#addProducts').on('click', function(){
         $('#addModal').find('#id').val("");
+        $('#addModal').find('#customers').val("");
         $('#addModal').find('#product').val("");
         $('#addModal').find('#quantity').val("");
         $('#addModal').find('#pickedBy').val("");
@@ -198,6 +211,7 @@ function edit(id){
         
         if(obj.status === 'success'){
           $('#addModal').find('#id').val(obj.message.id);
+          $('#addModal').find('#customers').val(obj.message.customer);
           $('#addModal').find('#product').val(obj.message.product);
           $('#addModal').find('#quantity').val(obj.message.quantity);
           $('#addModal').find('#pickedBy').val(obj.message.pick_by);
