@@ -8,14 +8,16 @@ if(!isset($_SESSION['userID'])){
     echo 'window.location.href = "../login.html";</script>';
 }
 
-if(isset($_POST['customers'], $_POST['product'], $_POST['quantity'], $_POST['pickedBy'])){
+if(isset($_POST['customers'], $_POST['pickedBy'])){
     $customers = filter_input(INPUT_POST, 'customers', FILTER_SANITIZE_STRING);
-    $product = filter_input(INPUT_POST, 'product', FILTER_SANITIZE_STRING);
-    $quantity = filter_input(INPUT_POST, 'quantity', FILTER_SANITIZE_STRING);
     $pickedBy = filter_input(INPUT_POST, 'pickedBy', FILTER_SANITIZE_STRING);
     $user = $_SESSION['userID'];
     $today = date("Y-m-d 00:00:00");
     $createdDatetime = date("Y-m-d h:i:s");
+
+    // Branch
+    $product = $_POST['product'];
+    $quantity = $_POST['quantity'];
 
     if($_POST['id'] != null && $_POST['id'] != ''){
         if ($update_stmt = $db->prepare("UPDATE jobs SET customer=?, product=?, pick_by=?, quantity=? WHERE id=?")) {
@@ -74,8 +76,8 @@ if(isset($_POST['customers'], $_POST['product'], $_POST['quantity'], $_POST['pic
         
                 $serialNo .= strval($count);  //S00009
 
-                if ($insert_stmt = $db->prepare("INSERT INTO jobs (job_no, customer, product, pick_by, quantity, created_by, created_datetime) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('sssssss', $serialNo, $customers, $product, $pickedBy, $quantity, $user, $createdDatetime);
+                if ($insert_stmt = $db->prepare("INSERT INTO jobs (job_no, customer, pick_by, created_by, created_datetime) VALUES (?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('sssss', $serialNo, $customers, $pickedBy, $user, $createdDatetime);
                     
                     // Execute the prepared query.
                     if (! $insert_stmt->execute()) {
@@ -87,15 +89,44 @@ if(isset($_POST['customers'], $_POST['product'], $_POST['quantity'], $_POST['pic
                         );
                     }
                     else{
+                        $id = $insert_stmt->insert_id;;
                         $insert_stmt->close();
-                        $db->close();
-                        
-                        echo json_encode(
-                            array(
-                                "status"=> "success", 
-                                "message"=> "Added Successfully!!" 
-                            )
-                        );
+                        $success = true;
+
+
+                        for($j=0; $j<sizeof($product); $j++){
+                            if ($insert_stmt2 = $db->prepare("INSERT INTO job_details (job_id, product, quantity) VALUES (?, ?, ?)")) {
+                                $insert_stmt2->bind_param('sss', $id, $product[$j], $quantity[$j]);
+                                
+                                // Execute the prepared query.
+                                if (! $insert_stmt2->execute()) {
+                                    $success = false;
+                                }
+                            }
+                        }
+    
+                        if($success){
+                            $insert_stmt2->close();
+                            $db->close();
+    
+                            echo json_encode(
+                                array(
+                                    "status"=> "success", 
+                                    "message"=> "Added Successfully!!"
+                                )
+                            );
+                        }
+                        else{
+                            $insert_stmt2->close();
+                            $db->close();
+    
+                            echo json_encode(
+                                array(
+                                    "status"=> "failed", 
+                                    "message"=> "Failed to created branch records due to ".$insert_stmt2->error 
+                                )
+                            );
+                        }
                     }
                 }
 			}

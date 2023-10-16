@@ -46,11 +46,10 @@ else{
 								<tr>
                   <th>Job No.</th>
                   <th>Customer</th>
-									<th>Product</th>
-                  <th>Quantity</th>
                   <th>Picked By</th>
                   <th>Status</th>
 									<th>Actions</th>
+                  <th></th>
 								</tr>
 							</thead>
 						</table>
@@ -85,19 +84,6 @@ else{
                     <?php } ?>
                   </select>
                 </div>
-                <div class="form-group">
-                  <label for="product">Product *</label>
-                  <select class="form-control" id="product" name="product" style="width: 100%;">
-                    <option selected="selected">-</option>
-                    <?php while($rowProduct=mysqli_fetch_assoc($products)){ ?>
-                      <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['product_name'] ?></option>
-                    <?php } ?>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="code">Quantity *</label>
-                  <input type="number" class="form-control" name="quantity" id="quantity" placeholder="Enter Quantity" required>
-                </div>
                 <div class="form-group"> 
                   <label for="remark">Picked By *</label>
                   <select class="form-control" id="pickedBy" name="pickedBy" style="width: 100%;">
@@ -107,6 +93,20 @@ else{
                     <?php } ?>
                   </select>
                 </div>
+                <div class="row">
+                  <h4>Products</h4>
+                  <button style="margin-left:auto;margin-right: 25px;" type="button" class="btn btn-primary add-branch">Add Product</button>
+                </div>
+                <table style="width: 100%;">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Quantity</th>
+                      <th>Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody id="branchTable"></tbody>
+                </table>
               </div>
             </div>
             <div class="modal-footer justify-content-between">
@@ -120,9 +120,27 @@ else{
     <!-- /.modal-dialog -->
 </div>
 
+<script type="text/html" id="branchDetails">
+  <tr class="details">
+    <td>
+      <select class="form-control" style="width: 100%;" id="product" required>
+        <?php while($rowProduct=mysqli_fetch_assoc($products)){ ?>
+          <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['product_name'] ?></option>
+        <?php } ?>
+      </select>
+    </td>
+    <td>
+      <input id="quantity" type="number" class="form-control" placeholder="Enter ..." required>
+    </td>
+    <td><button class="btn btn-danger btn-sm" id="remove"><i class="fa fa-times"></i></button></td>
+  </tr>
+</script>
+
 <script>
+var branchCount = $("#branchTable").find(".details").length;
+
 $(function () {
-    $("#productTable").DataTable({
+    var table = $("#productTable").DataTable({
         "responsive": true,
         "autoWidth": false,
         'processing': true,
@@ -134,23 +152,42 @@ $(function () {
             'url':'php/loadJobs.php'
         },
         'columns': [
-            { data: 'job_no' },
-            { data: 'customer_name' },
-            { data: 'product_name' },
-            { data: 'quantity' },
-            { data: 'name' },
-            { data: 'status' },
-            { 
-                data: 'id',
-                render: function ( data, type, row ) {
-                    return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
-                }
+          { data: 'job_no' },
+          { data: 'customer_name' },
+          { data: 'name' },
+          { data: 'status' },
+          { 
+            data: 'id',
+            render: function ( data, type, row ) {
+              return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
             }
+          },
+          { 
+            className: 'dt-control',
+            orderable: false,
+            data: null,
+            render: function ( data, type, row ) {
+              return '<td class="table-elipse" data-toggle="collapse" data-target="#demo'+row.serialNo+'"><i class="fas fa-angle-down"></i></td>';
+            }
+          }
         ],
         "rowCallback": function( row, data, index ) {
 
             //$('td', row).css('background-color', '#E6E6FA');
         },        
+    });
+
+    $('#productTable tbody').on('click', 'td.dt-control', function () {
+      var tr = $(this).closest('tr');
+      var row = table.row( tr );
+
+      if ( row.child.isShown() ) {
+        row.child.hide();
+        tr.removeClass('shown');
+      }
+      else {
+        row.child( format(row.data()) ).show();tr.addClass("shown");
+      }
     });
     
     $.validator.setDefaults({
@@ -183,9 +220,9 @@ $(function () {
     $('#addProducts').on('click', function(){
         $('#addModal').find('#id').val("");
         $('#addModal').find('#customers').val("");
-        $('#addModal').find('#product').val("");
-        $('#addModal').find('#quantity').val("");
+        $('#addModal').find('#branchTable').html("");
         $('#addModal').find('#pickedBy').val("");
+        branchCount = 0;
         $('#addModal').modal('show');
         
         $('#productForm').validate({
@@ -202,7 +239,43 @@ $(function () {
             }
         });
     });
+
+    $(".add-branch").click(function(){
+      var $addContents = $("#branchDetails").clone();
+      $("#branchTable").append($addContents.html());
+
+      $("#branchTable").find('.details:last').attr("id", "detail" + branchCount);
+      $("#branchTable").find('.details:last').attr("data-index", branchCount);
+      $("#branchTable").find('#remove:last').attr("id", "remove" + branchCount);
+
+      $("#branchTable").find('#product:last').attr('name', 'product['+branchCount+']').attr("id", "product" + branchCount);
+      $("#branchTable").find('#quantity:last').attr('name', 'quantity['+branchCount+']').attr("id", "quantity" + branchCount);
+      
+      branchCount++;
+    });
+
+    $("#branchTable").on('click', 'button[id^="remove"]', function () {
+      var index = $(this).parents('.details').attr('data-index');
+      $("#branchTable").append('<input type="hidden" name="deletedBranch[]" value="'+index+'"/>');
+      branchCount--;
+      $(this).parents('.details').remove();
+    });
 });
+
+function format (row) {
+  var returnString = '';
+  if(row.items != null){
+    returnString += '<p>Items</p><table style="width: 100%;"><thead><tr><th>Product Name</th><th>Quantity</th></tr></thead><tbody>'
+    
+    for(var i=0; i<row.items.length; i++){
+      returnString += '<tr><td>'+row.items[i].product_name+'</td><td>'+row.items[i].quantity+'</td></tr>';
+    }
+
+    returnString += '</tbody></table>';
+  }
+  
+  return returnString;
+}
 
 function edit(id){
     $('#spinnerLoading').show();

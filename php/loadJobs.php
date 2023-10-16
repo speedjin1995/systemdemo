@@ -28,23 +28,46 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select jobs.id, jobs.job_no, customers.customer_name, products.product_name, users.name, jobs.quantity, jobs.status, jobs.created_datetime 
-from jobs, products, users, customers WHERE jobs.deleted = '0' AND products.id = jobs.product AND users.id = jobs.pick_by AND customers.id = jobs.customer
+$empQuery = "select jobs.id, jobs.job_no, customers.customer_name, users.name, jobs.status, jobs.created_datetime 
+from jobs, users, customers WHERE jobs.deleted = '0' AND users.id = jobs.pick_by AND customers.id = jobs.customer
 ".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
 while($row = mysqli_fetch_assoc($empRecords)) {
-    $data[] = array( 
-      "id"=>$row['id'],
-      "job_no"=>$row['job_no'],
-      "customer_name"=>$row['customer_name'],
-      "product_name"=>$row['product_name'],
-      "name"=>$row['name'],
-      "quantity"=>$row['quantity'],
-      "status"=>$row['status'],
-      "created_datetime"=>$row['created_datetime']
-    );
+  $items = array();
+
+  if($row['id']!=null && $row['id']!=''){
+    $id = $row['id'];
+
+    if ($update_stmt = $db->prepare("SELECT * FROM job_details, products WHERE job_details.product = products.id AND job_details.job_id=?")) {
+      $update_stmt->bind_param('s', $id);
+      
+      if ($update_stmt->execute()) {
+        $result = $update_stmt->get_result();
+
+        while ($row2 = $result->fetch_assoc()) {
+          $items[] = array(
+            "id"=>$row2['id'],
+            "job_id"=>$row2['job_id'],
+            "product"=>$row2['product'],
+            "product_name" => $row2['product_name'],
+            "quantity"=>$row2['quantity']
+          );
+        }
+      }
+    }
+  }
+
+  $data[] = array( 
+    "id"=>$row['id'],
+    "job_no"=>$row['job_no'],
+    "customer_name"=>$row['customer_name'],
+    "name"=>$row['name'],
+    "status"=>$row['status'],
+    "created_datetime"=>$row['created_datetime'],
+    "items" => $items
+  );
 }
 
 ## Response
