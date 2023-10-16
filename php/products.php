@@ -62,15 +62,33 @@ if(isset($_POST['code'], $_POST['product'], $_POST['basis'], $_POST['width'], $_
                 );
             }
             else{
+                $id = $insert_stmt->insert_id;;
                 $insert_stmt->close();
-                $db->close();
-                
-                echo json_encode(
-                    array(
-                        "status"=> "success", 
-                        "message"=> "Added Successfully!!" 
-                    )
-                );
+
+                if ($insert_stmt2 = $db->prepare("INSERT INTO inventory (product_id) VALUES (?)")) {
+                    $insert_stmt2->bind_param('s', $id);
+                    
+                    // Execute the prepared query.
+                    if (! $insert_stmt2->execute()) {
+                        echo json_encode(
+                            array(
+                                "status"=> "failed", 
+                                "message"=> $insert_stmt2->error
+                            )
+                        );
+                    }
+                    else{
+                        $insert_stmt2->close();
+                        $db->close();
+                        
+                        echo json_encode(
+                            array(
+                                "status"=> "success", 
+                                "message"=> "Added Successfully!!" 
+                            )
+                        );
+                    }
+                }
             }
         }
     }

@@ -434,14 +434,14 @@ to get the desired effect
                       <i class="nav-icon fas fa-warehouse"></i>
                       <p>Warehouse</p>
                     </a>
-                  </li>
-                  <li class="nav-item">
+                  </li>';
+                  /*<li class="nav-item">
                     <a href="#racking" data-file="racking.php" class="nav-link link">
                       <i class="nav-icon fas fa-pallet"></i>
                       <p>Racking</p>
                     </a>
-                  </li>
-                </ul>
+                  </li>*/
+                echo '</ul>
               </li>';
               }
           ?>
