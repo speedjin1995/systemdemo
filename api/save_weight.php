@@ -112,7 +112,7 @@ if(isset($post['status'], $post['product'], $post['weight'], $post['tare']
 				$insert_stmt->close();
 
 				// Check if the product and warehouse combination exists in the inventory table.
-				$check_stmt = $db->prepare("SELECT id, quantity, weight FROM inventory WHERE product = ? AND warehouse = ?");
+				$check_stmt = $db->prepare("SELECT id, quantity, weight FROM inventory WHERE product_id = ? AND warehouse = ?");
 				$check_stmt->bind_param('ss', $product, $warehouse);
 				$check_stmt->execute();
 				$check_stmt->store_result();
@@ -132,7 +132,7 @@ if(isset($post['status'], $post['product'], $post['weight'], $post['tare']
 					$update_stmt->close();
 				} else {
 					$newQuantity = 1;
-					$insert_inventory_stmt = $db->prepare("INSERT INTO inventory (product, warehouse, quantity, weight) VALUES (?, ?, ?, ?)");
+					$insert_inventory_stmt = $db->prepare("INSERT INTO inventory (product_id, warehouse, quantity, weight) VALUES (?, ?, ?, ?)");
 					$insert_inventory_stmt->bind_param('ssss', $product, $warehouse, $newQuantity, $net);
 					$insert_inventory_stmt->execute();
 					$insert_inventory_stmt->close();
