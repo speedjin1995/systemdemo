@@ -7,7 +7,7 @@ $post = json_decode(file_get_contents('php://input'), true);
 $now = date("Y-m-d H:i:s");
 
 $stmt = $db->prepare("SELECT weighing.*, products.product_name, products.product_code, products.basis_weight, 
-products.width, products.diameter, products.class, users.name, product_parents.name_en, product_parents.name_ch 
+products.width, products.diameter, products.class, users.name, parent_product.name_en, parent_product.name_ch 
 from products, weighing, users, parent_product WHERE products.product_parents = parent_product.id AND 
 weighing.staff_name = users.id AND weighing.product = products.id AND weighing.deleted = '0'");
 $stmt->execute();

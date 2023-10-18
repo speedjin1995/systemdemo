@@ -5,59 +5,53 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 session_start();
 $post = json_decode(file_get_contents('php://input'), true);
 
-if(isset($post['weighing'], $post['createdDatetime'])){
+if (isset($post['weighing'], $post['createdDatetime'])) {
+    $product = $post['weighing'];
+    $createdDatetime = $post['createdDatetime'];
+    $availability = '0'; // Set the availability value
+    
+    for($i=0; $i<count($post['weighing']); $i++){
+        $job = $post['weighing'][$i];
+        
+        $weigh_data = $job['weigh_data'];
+        $success = true;
+    
+        foreach ($weigh_data as $item) {
+            $id = $item['id'];
+    
+            if ($update_stmt = $db->prepare("UPDATE weighing SET availablility=? WHERE id=?")) {
+                $update_stmt->bind_param('ss', $availability, $id);
+                
+                // Execute the prepared query.
+                if (!$update_stmt->execute()) {
+                    $success = false;
+                }
+            }
+        }
+    }
 
-	$weighing = json_decode($post['weighing'], true);
-	$createdDatetime = $post['createdDatetime'];
-	$jobProduct = $weighing['jobs_data'];
-	$availablility = '1';
-	$success = true;
+    if ($success) {
+        $update_stmt->close();
+        $db->close();
 
-	for($i=0; $i<count($jobProduct); $i++){
-		$jobProduct = $jobProduct[$i]['weigh_data'];
-		$id = $jobProduct['id'];
+        echo json_encode([
+            "status" => "success",
+            "message" => "Updated Successfully!!"
+        ]);
+    } 
+    else {
+        $update_stmt->close();
+        $db->close();
 
-		if ($update_stmt = $db->prepare("UPDATE weighing SET availablility=? WHERE id=?")){
-			$update_stmt->bind_param('ss', $availablility, $id);
-		
-			// Execute the prepared query.
-			if (! $update_stmt->execute()){
-				$success = false;
-			} 
-			
-		}
-	}
-	
-	if($success){
-		$update_stmt->close();
-		$db->close();
-
-		echo json_encode(
-			array(
-				"status"=> "success", 
-				"message"=> "Reveted Successfully!!" 
-			)
-		);
-	}
-	else{
-		$update_stmt->close();
-		$db->close();
-		
-		echo json_encode(
-			array(
-				"status"=> "failed", 
-				"message"=> "something went wrong when revert" 
-			)
-		);
-	}
-} 
-else{
-    echo json_encode(
-        array(
-            "status"=> "failed", 
-            "message"=> "Please fill in all the fields"
-        )
-    );     
+        echo json_encode([
+            "status" => "failed",
+            "message" => "Something went wrong when updating"
+        ]);
+    }
+} else {
+    echo json_encode([
+        "status" => "failed",
+        "message" => "Please fill in all the fields"
+    ]);
 }
-
 ?>
