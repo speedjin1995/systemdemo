@@ -7,10 +7,10 @@ $post = json_decode(file_get_contents('php://input'), true);
 $now = date("Y-m-d H:i:s");
 $id = $post['id'];
 
-$stmt = $db->prepare("SELECT select jobs.id, jobs.job_no, customers.customer_name, users.name, jobs.status, jobs.created_datetime 
+$stmt = $db->prepare("SELECT jobs.id, jobs.job_no, customers.customer_name, users.name, jobs.status, jobs.created_datetime 
 from jobs, users, customers WHERE jobs.deleted = '0' AND users.id = jobs.pick_by AND customers.id = jobs.customer AND jobs.status <> 'Picked'
 AND jobs.pick_by = ?");
-$insert_stmt->bind_param('s', $id);
+$stmt->bind_param('s', $id);
 $stmt->execute();
 $result = $stmt->get_result();
 $message = array();
