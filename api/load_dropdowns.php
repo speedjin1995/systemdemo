@@ -18,9 +18,9 @@ while($row1=mysqli_fetch_assoc($warehouse)){
 
 while($row2=mysqli_fetch_assoc($racking)){
     $data2[] = array( 
-        'id'=>$data2['id'],
-        'warehouse'=>$data2['warehouse'],
-        'rack_number'=>$data2['rack_number']
+        'id'=>$row2['id'],
+        'warehouse'=>$row2['warehouse'],
+        'rack_number'=>$row2['rack_number']
     );
 }
 
