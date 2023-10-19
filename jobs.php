@@ -194,22 +194,22 @@ $(function () {
         submitHandler: function () {
             $('#spinnerLoading').show();
             $.post('php/jobs.php', $('#productForm').serialize(), function(data){
-                var obj = JSON.parse(data); 
-                
-                if(obj.status === 'success'){
-                    $('#addModal').modal('hide');
-                    toastr["success"](obj.message, "Success:");
-                    $('#productTable').DataTable().ajax.reload();
-                    $('#spinnerLoading').hide();
-                }
-                else if(obj.status === 'failed'){
-                    toastr["error"](obj.message, "Failed:");
-                    $('#spinnerLoading').hide();
-                }
-                else{
-                    toastr["error"]("Something wrong when edit", "Failed:");
-                    $('#spinnerLoading').hide();
-                }
+              var obj = JSON.parse(data); 
+              
+              if(obj.status === 'success'){
+                $('#addModal').modal('hide');
+                toastr["success"](obj.message, "Success:");
+                $('#productTable').DataTable().ajax.reload();
+                $('#spinnerLoading').hide();
+              }
+              else if(obj.status === 'failed'){
+                toastr["error"](obj.message, "Failed:");
+                $('#spinnerLoading').hide();
+              }
+              else{
+                toastr["error"]("Something wrong when edit", "Failed:");
+                $('#spinnerLoading').hide();
+              }
             });
         }
     });
@@ -282,9 +282,27 @@ function edit(id){
         if(obj.status === 'success'){
           $('#addModal').find('#id').val(obj.message.id);
           $('#addModal').find('#customers').val(obj.message.customer);
-          $('#addModal').find('#product').val(obj.message.product);
-          $('#addModal').find('#quantity').val(obj.message.quantity);
           $('#addModal').find('#pickedBy').val(obj.message.pick_by);
+
+          $('#addModal').find('#branchTable').html("");
+          branchCount = 0;
+
+          if(obj.message.items != null){
+            for(var i=0; i<obj.message.items.length; i++){
+              var $addContents = $("#branchDetails").clone();
+              $("#branchTable").append($addContents.html());
+
+              $("#branchTable").find('.details:last').attr("id", "detail" + branchCount);
+              $("#branchTable").find('.details:last').attr("data-index", branchCount);
+              $("#branchTable").find('#remove:last').attr("id", "remove" + branchCount);
+
+              $("#branchTable").find('#product:last').attr('name', 'product['+branchCount+']').attr("id", "product" + branchCount).val(obj.message.items[i].product);
+              $("#branchTable").find('#quantity:last').attr('name', 'quantity['+branchCount+']').attr("id", "quantity" + branchCount).val(obj.message.items[i].quantity);
+              
+              branchCount++;
+            }
+          }
+
           $('#addModal').modal('show');
           
           $('#productForm').validate({

@@ -4,6 +4,7 @@ require_once 'db_connect.php';
 $products = $db->query("SELECT products.*, parent_product.name_en, parent_product.name_ch FROM products, parent_product WHERE products.product_parents = parent_product.id AND products.deleted = '0'");
 $warehouse = $db->query("SELECT * FROM warehouse WHERE deleted = '0'");
 $racking = $db->query("SELECT * FROM racking WHERE deleted = '0'");
+$grade = $db->query("SELECT * FROM grade WHERE deleted = '0'");
 
 $data1 = array();
 $data2 = array();
@@ -38,6 +39,13 @@ while($row3=mysqli_fetch_assoc($products)){
     );
 }
 
+while($row4=mysqli_fetch_assoc($grade)){
+    $data4[] = array( 
+        'id'=>$row4['id'],
+        'grade'=>$row4['grade']
+    );
+}
+
 $db->close();
 
 echo json_encode(
@@ -45,7 +53,8 @@ echo json_encode(
         "status"=> "success",
         "warehouses"=> $data1,
         "rackings"=> $data2,
-        "products"=> $data3
+        "products"=> $data3,
+        "grade"=> $data4
     )
 );
 ?>

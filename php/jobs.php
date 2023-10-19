@@ -20,8 +20,8 @@ if(isset($_POST['customers'], $_POST['pickedBy'])){
     $quantity = $_POST['quantity'];
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE jobs SET customer=?, product=?, pick_by=?, quantity=? WHERE id=?")) {
-            $update_stmt->bind_param('sssss', $customers, $product, $pickedBy, $quantity, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE jobs SET customer=?, pick_by=? WHERE id=?")) {
+            $update_stmt->bind_param('sss', $customers, $pickedBy, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {

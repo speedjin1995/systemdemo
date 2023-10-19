@@ -16,7 +16,7 @@ else{
     <div class="container-fluid">
         <div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Products</h1>
+				<h1 class="m-0 text-dark">Grade</h1>
 			</div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -33,17 +33,16 @@ else{
                         <div class="row">
                             <div class="col-9"></div>
                             <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addProducts">Add Products</button>
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addUnits">Add Grade</button>
                             </div>
                         </div>
                     </div>
 					<div class="card-body">
-						<table id="productTable" class="table table-bordered table-striped">
+						<table id="unitTable" class="table table-bordered table-striped">
 							<thead>
 								<tr>
-                                    <th>No.</th>
-									<th>Product Name (EN)</th>
-                                    <th>Product Name (CH)</th>
+									<th>No.</th>
+									<th>Grade</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -55,34 +54,30 @@ else{
 	</div><!-- /.container-fluid -->
 </section><!-- /.content -->
 
-<div class="modal fade" id="addModal">
+<div class="modal fade" id="unitModal">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
-        <form role="form" id="productForm">
+        <form role="form" id="unitForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Parent Products</h4>
+              <h4 class="modal-title">Add Grade</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-              <div class="card-body">
-                <div class="form-group">
-                  <input type="hidden" class="form-control" id="id" name="id">
-                </div>
-                <div class="form-group">
-                  <label for="product">Product Name (EN) *</label>
-                  <input type="text" class="form-control" name="product" id="product" placeholder="Enter Product Name" required>
-                </div>
-                <div class="form-group"> 
-                  <label for="remark">Product Name (CH) *</label>
-                  <input type="text" class="form-control" name="productName" id="productName" placeholder="Enter Product Name" required>
-                </div>
-              </div>
+                <div class="card-body">
+                    <div class="form-group">
+    					<input type="hidden" class="form-control" id="id" name="id">
+    				</div>
+    				<div class="form-group">
+    					<label for="units">Grade *</label>
+    					<input type="text" class="form-control" name="warehouse" id="warehouse" placeholder="Enter warehouse" required>
+    				</div>
+    			</div>
             </div>
             <div class="modal-footer justify-content-between">
               <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary" name="submit" id="submitMember">Submit</button>
+              <button type="submit" class="btn btn-primary" name="submit" id="submitLot">Submit</button>
             </div>
         </form>
       </div>
@@ -93,7 +88,7 @@ else{
 
 <script>
 $(function () {
-    $("#productTable").DataTable({
+    $("#unitTable").DataTable({
         "responsive": true,
         "autoWidth": false,
         'processing': true,
@@ -102,12 +97,11 @@ $(function () {
         'order': [[ 1, 'asc' ]],
         'columnDefs': [ { orderable: false, targets: [0] }],
         'ajax': {
-            'url':'php/loadParentProducts.php'
+            'url':'php/loadGrade.php'
         },
         'columns': [
             { data: 'counter' },
-            { data: 'name_en' },
-            { data: 'name_ch' },
+            { data: 'grade' },
             { 
                 data: 'id',
                 render: function ( data, type, row ) {
@@ -118,19 +112,19 @@ $(function () {
         "rowCallback": function( row, data, index ) {
 
             //$('td', row).css('background-color', '#E6E6FA');
-        },        
+        },
     });
     
     $.validator.setDefaults({
         submitHandler: function () {
             $('#spinnerLoading').show();
-            $.post('php/parentProducts.php', $('#productForm').serialize(), function(data){
+            $.post('php/grade.php', $('#unitForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
                 
                 if(obj.status === 'success'){
-                    $('#addModal').modal('hide');
+                    $('#unitModal').modal('hide');
                     toastr["success"](obj.message, "Success:");
-                    $('#productTable').DataTable().ajax.reload();
+                    $('#unitTable').DataTable().ajax.reload();
                     $('#spinnerLoading').hide();
                 }
                 else if(obj.status === 'failed'){
@@ -145,13 +139,12 @@ $(function () {
         }
     });
 
-    $('#addProducts').on('click', function(){
-        $('#addModal').find('#id').val("");
-        $('#addModal').find('#product').val("");
-        $('#addModal').find('#productName').val("");
-        $('#addModal').modal('show');
+    $('#addUnits').on('click', function(){
+        $('#unitModal').find('#id').val("");
+        $('#unitModal').find('#warehouse').val("");
+        $('#unitModal').modal('show');
         
-        $('#productForm').validate({
+        $('#unitForm').validate({
             errorElement: 'span',
             errorPlacement: function (error, element) {
                 error.addClass('invalid-feedback');
@@ -169,16 +162,15 @@ $(function () {
 
 function edit(id){
     $('#spinnerLoading').show();
-    $.post('php/getParentProduct.php', {userID: id}, function(data){
+    $.post('php/getGrade.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
-            $('#addModal').find('#id').val(obj.message.id);
-            $('#addModal').find('#product').val(obj.message.name_en);
-            $('#addModal').find('#productName').val(obj.message.name_ch);
-            $('#addModal').modal('show');
+            $('#unitModal').find('#id').val(obj.message.id);
+            $('#unitModal').find('#warehouse').val(obj.message.grade);
+            $('#unitModal').modal('show');
             
-            $('#productForm').validate({
+            $('#unitForm').validate({
                 errorElement: 'span',
                 errorPlacement: function (error, element) {
                     error.addClass('invalid-feedback');
@@ -204,12 +196,12 @@ function edit(id){
 
 function deactivate(id){
     $('#spinnerLoading').show();
-    $.post('php/deleteParentProduct.php', {userID: id}, function(data){
+    $.post('php/deleteGrade.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
             toastr["success"](obj.message, "Success:");
-            $('#productTable').DataTable().ajax.reload();
+            $('#unitTable').DataTable().ajax.reload();
             $('#spinnerLoading').hide();
         }
         else if(obj.status === 'failed'){

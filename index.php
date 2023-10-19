@@ -441,7 +441,13 @@ to get the desired effect
                       <p>Racking</p>
                     </a>
                   </li>*/
-                echo '</ul>
+                echo '<li class="nav-item">
+                    <a href="#grade" data-file="grade.php" class="nav-link link">
+                      <i class="nav-icon fas fa-graduation-cap"></i>
+                      <p>Grade</p>
+                    </a>
+                  </li>
+                </ul>
               </li>';
               }
           ?>
