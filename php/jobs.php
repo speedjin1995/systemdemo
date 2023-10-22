@@ -16,12 +16,16 @@ if(isset($_POST['customers'], $_POST['pickedBy'])){
     $createdDatetime = date("Y-m-d h:i:s");
 
     // Branch
+    $detailsId = $_POST['detailsId'];
     $product = $_POST['product'];
+    $width = $_POST['width'];
+    $diameter = $_POST['diameter'];
     $quantity = $_POST['quantity'];
 
     if($_POST['id'] != null && $_POST['id'] != ''){
+        $id = $_POST['id'];
         if ($update_stmt = $db->prepare("UPDATE jobs SET customer=?, pick_by=? WHERE id=?")) {
-            $update_stmt->bind_param('sss', $customers, $pickedBy, $_POST['id']);
+            $update_stmt->bind_param('sss', $customers, $pickedBy, $id);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -34,14 +38,41 @@ if(isset($_POST['customers'], $_POST['pickedBy'])){
             }
             else{
                 $update_stmt->close();
-                $db->close();
-                
-                echo json_encode(
-                    array(
-                        "status"=> "success", 
-                        "message"=> "Updated Successfully!!" 
-                    )
-                );
+                $success = true;
+
+                for($j=0; $j<sizeof($product); $j++){
+                    if ($insert_stmt2 = $db->prepare("UPDATE job_details SET product=?, diameter=?, width=?, quantity=? WHERE id=?")) {
+                        $insert_stmt2->bind_param('sssss', $product[$j], $diameter[$j], $width[$j], $quantity[$j], $detailsId[$j]);
+                        
+                        // Execute the prepared query.
+                        if (! $insert_stmt2->execute()) {
+                            $success = false;
+                        }
+                    }
+                }
+
+                if($success){
+                    $insert_stmt2->close();
+                    $db->close();
+
+                    echo json_encode(
+                        array(
+                            "status"=> "success", 
+                            "message"=> "Updated Successfully!!"
+                        )
+                    );
+                }
+                else{
+                    $insert_stmt2->close();
+                    $db->close();
+
+                    echo json_encode(
+                        array(
+                            "status"=> "failed", 
+                            "message"=> "Failed to created branch records due to ".$insert_stmt2->error 
+                        )
+                    );
+                }
             }
         }
     }
@@ -93,10 +124,9 @@ if(isset($_POST['customers'], $_POST['pickedBy'])){
                         $insert_stmt->close();
                         $success = true;
 
-
                         for($j=0; $j<sizeof($product); $j++){
-                            if ($insert_stmt2 = $db->prepare("INSERT INTO job_details (job_id, product, quantity) VALUES (?, ?, ?)")) {
-                                $insert_stmt2->bind_param('sss', $id, $product[$j], $quantity[$j]);
+                            if ($insert_stmt2 = $db->prepare("INSERT INTO job_details (job_id, product, diameter, width, quantity) VALUES (?, ?, ?, ?, ?)")) {
+                                $insert_stmt2->bind_param('sssss', $id, $product[$j], $diameter[$j], $width[$j], $quantity[$j]);
                                 
                                 // Execute the prepared query.
                                 if (! $insert_stmt2->execute()) {

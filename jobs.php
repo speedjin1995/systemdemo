@@ -101,6 +101,8 @@ else{
                   <thead>
                     <tr>
                       <th>Product</th>
+                      <th>Width</th>
+                      <th>Diameter</th>
                       <th>Quantity</th>
                       <th>Delete</th>
                     </tr>
@@ -128,6 +130,13 @@ else{
           <option value="<?=$rowProduct['id'] ?>"><?=$rowProduct['product_name'] ?></option>
         <?php } ?>
       </select>
+    </td>
+    <td>
+      <input id="detailsId" type="hidden" class="form-control" placeholder="Enter ...">
+      <input id="width" type="number" class="form-control" placeholder="Enter ..." required>
+    </td>
+    <td>
+      <input id="diameter" type="number" class="form-control" placeholder="Enter ..." required>
     </td>
     <td>
       <input id="quantity" type="number" class="form-control" placeholder="Enter ..." required>
@@ -245,7 +254,10 @@ $(function () {
       $("#branchTable").find('.details:last').attr("data-index", branchCount);
       $("#branchTable").find('#remove:last').attr("id", "remove" + branchCount);
 
+      $("#branchTable").find('#detailsId:last').attr('name', 'detailsId['+branchCount+']').attr("id", "detailsId" + branchCount);
       $("#branchTable").find('#product:last').attr('name', 'product['+branchCount+']').attr("id", "product" + branchCount);
+      $("#branchTable").find('#width:last').attr('name', 'width['+branchCount+']').attr("id", "width" + branchCount);
+      $("#branchTable").find('#diameter:last').attr('name', 'diameter['+branchCount+']').attr("id", "diameter" + branchCount);
       $("#branchTable").find('#quantity:last').attr('name', 'quantity['+branchCount+']').attr("id", "quantity" + branchCount);
       
       branchCount++;
@@ -262,10 +274,10 @@ $(function () {
 function format (row) {
   var returnString = '';
   if(row.items != null){
-    returnString += '<p>Items</p><table style="width: 100%;"><thead><tr><th>Product Name</th><th>Quantity</th></tr></thead><tbody>'
+    returnString += '<p>Items</p><table style="width: 100%;"><thead><tr><th>Product Name</th><th>Diameter</th><th>Width</th><th>Quantity</th></tr></thead><tbody>'
     
     for(var i=0; i<row.items.length; i++){
-      returnString += '<tr><td>'+row.items[i].product_name+'</td><td>'+row.items[i].quantity+'</td></tr>';
+      returnString += '<tr><td>'+row.items[i].product_name+'</td><td>'+row.items[i].diameter+'</td><td>'+row.items[i].width+'</td><td>'+row.items[i].quantity+'</td></tr>';
     }
 
     returnString += '</tbody></table>';
@@ -296,7 +308,10 @@ function edit(id){
               $("#branchTable").find('.details:last').attr("data-index", branchCount);
               $("#branchTable").find('#remove:last').attr("id", "remove" + branchCount);
 
+              $("#branchTable").find('#detailsId:last').attr('name', 'detailsId['+branchCount+']').attr("id", "detailsId" + branchCount).val(obj.message.items[i].id);
               $("#branchTable").find('#product:last').attr('name', 'product['+branchCount+']').attr("id", "product" + branchCount).val(obj.message.items[i].product);
+              $("#branchTable").find('#width:last').attr('name', 'width['+branchCount+']').attr("id", "width" + branchCount).val(obj.message.items[i].width);
+              $("#branchTable").find('#diameter:last').attr('name', 'diameter['+branchCount+']').attr("id", "diameter" + branchCount).val(obj.message.items[i].diameter);
               $("#branchTable").find('#quantity:last').attr('name', 'quantity['+branchCount+']').attr("id", "quantity" + branchCount).val(obj.message.items[i].quantity);
               
               branchCount++;

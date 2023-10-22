@@ -14,8 +14,7 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = "";
 if($searchValue != ''){
-   $searchQuery = " and (customer_name like '%".$searchValue."%' or 
-   product like '%".$searchValue."%' )";
+  $searchQuery = " and (serial_no like '%".$searchValue."%'";
 }
 
 ## Total number of records without filtering
@@ -29,23 +28,53 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select * from weighing WHERE deleted = '0'".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from mother_rolls ".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 $counter = 1;
 
 while($row = mysqli_fetch_assoc($empRecords)) {
+  $items = array();
+  
+  if($row['serial_no']!=null && $row['serial_no']!=''){
+    $id = $row['serial_no'];
+
+    if ($update_stmt = $db->prepare("SELECT weighing.*, users.name, products.product_name, products.basis_weight, grade.grade as class FROM weighing, users, products, grade WHERE grade.id=weighing.grade AND products.id=weighing.product AND users.id=weighing.staff_name AND weighing.mother_serials=?")) {
+      $update_stmt->bind_param('s', $id);
+      
+      if ($update_stmt->execute()) {
+        $result2 = $update_stmt->get_result();
+
+        while ($row2 = $result2->fetch_assoc()) {
+          $items[] = array(
+            "id"=>$row2['id'],
+            "serial_no"=>$row2['serial_no'],
+            "product"=>$row2['product'],
+            "product_name"=>$row2['product_name'],
+            "basis_weight"=>$row2['basis_weight'],
+            "diameter"=>$row2['diameter'],
+            "width"=>$row2['width'],
+            "grade"=>$row2['grade'],
+            "class"=>$row2['class'],
+            "weight"=>$row2['weight'],
+            "tare"=>$row2['tare'],
+            "net"=>$row2['net'],
+            "shift"=>$row2['shift'],
+            "staff_name"=>$row2['name'],
+            "created_datetime"=>$row2['created_datetime']
+          );
+        }
+      }
+    }
+  }
+
   $data[] = array( 
     "no"=>$counter,
     "id"=>$row['id'],
-    "status"=>$row['status'],
-    "customer_name"=>$row['customer_name'],
-    "supplier_name"=>$row['supplier_name'],
-    "product"=>$row['product'],
-    "weight"=>$row['weight'],
-    "shift"=>$row['shift'],
-    "staff_name"=>$row['staff_name'],
-    "created_datetime"=>$row['created_datetime']
+    "serial_no"=>$row['serial_no'],
+    "completed"=>$row['completed'],
+    "created_datetime"=>$row['created_datetime'],
+    "items" => $items
   );
 
   $counter++;

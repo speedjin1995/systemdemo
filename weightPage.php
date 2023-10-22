@@ -150,9 +150,10 @@ else{
               <thead>
                 <tr>
                   <th>No</th>
-                  <!--th>Customers</th-->
-                  <th>Product</th>
-                  <th>Weight</th>
+                  <th>Serials</th>
+                  <th>Completed</th>
+                  <!--th>Product</th>
+                  <th>Weight</th-->
                   <th>Created <br>Date & Time</th>
                   <th></th>
                 </tr>
@@ -187,13 +188,13 @@ $(function () {
     'order': [[ 1, 'asc' ]],
     'columnDefs': [ { orderable: false, targets: [0] }],
     'ajax': {
-        'url':'php/loadWeights.php'
+      'url':'php/loadWeights.php'
     },
     'columns': [
       { data: 'no' },
-      //{ data: 'customer_name' },
-      { data: 'product' },
-      { data: 'weight' },
+      { data: 'serial_no' },
+      //{ data: 'product' },
+      { data: 'completed' },
       { data: 'created_datetime' },
       { 
         className: 'dt-control',
@@ -628,13 +629,22 @@ function updateWeights(){
 }
 
 function format (row) {
-  return '<div class="row"><div class="col-md-3"><p>Status: '+row.status+
-  '</p></div><div class="col-md-3"><p>Shift: '+row.shift+
-  '</p></div><div class="col-md-3"><p>Staff Name: '+row.staff_name+
-  '</p></div></div><div class="row"><div class="col-3"><button type="button" class="btn btn-danger btn-sm" onclick="deactivate('+row.id+
-  ')"><i class="fas fa-trash"></i></button></div><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.id+
-  ')"><i class="fas fa-print"></i></button></div></div></div></div>'+
-  '</div>';
+  var returnString = '';
+  if(row.items != null){
+
+    returnString += '<p>Items</p><table style="width: 100%;"><thead><tr><th>Serial No.</th><th>Product Name</th><th>Basis Weight</th><th>Diameter</th><th>Width</th><th>Class</th><th>Weight</th><th></th></tr></thead><tbody>'
+    
+    for(var i=0; i<row.items.length; i++){
+      returnString += '<tr><td>'+row.items[i].serial_no+'</td><td>'+row.items[i].product_name+'</td><td>'+row.items[i].basis_weight+
+      '</td><td>'+row.items[i].diameter+'</td><td>'+row.items[i].width+'</td><td>'+row.items[i].class+'</td><td>'+row.items[i].net+
+      '</td><td><div class="row"><div class="col-3"><button type="button" class="btn btn-info btn-sm" onclick="print('+row.items[i].id+
+      ')"><i class="fas fa-print"></i></button></div></div></td></tr>';
+    }
+
+    returnString += '</tbody></table>';
+  }
+  
+  return returnString;
 }
 
 function formatNormal (row) {

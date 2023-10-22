@@ -31,7 +31,7 @@ function totalWeight($strings){
 if(isset($_POST['userID'], $_POST["file"])){
     $id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 
-    if ($select_stmt = $db->prepare("select weighing.serial_no, weighing.net, weighing.created_datetime, products.product_code, products.basis_weight, products.width, products.diameter, products.class FROM weighing, products WHERE weighing.product = products.product_name AND weighing.id=?")) {
+    if ($select_stmt = $db->prepare("select weighing.*, products.product_code, products.basis_weight, weighing.width, weighing.diameter, grade.grade as class FROM weighing, products, grade WHERE grade.id=weighing.grade AND weighing.product = products.id AND weighing.id=?")) {
         $select_stmt->bind_param('s', $id);
 
         if (! $select_stmt->execute()) {

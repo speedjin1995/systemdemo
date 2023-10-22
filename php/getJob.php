@@ -39,6 +39,8 @@ if(isset($_POST['userID'])){
                                     "id"=>$row2['id'],
                                     "job_id"=>$row2['job_id'],
                                     "product"=>$row2['product'],
+                                    "diameter"=>$row2['diameter'],
+                                    "width"=>$row2['width'],
                                     "quantity"=>$row2['quantity']
                                 );
                             }

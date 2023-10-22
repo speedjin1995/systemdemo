@@ -40,7 +40,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   if($row['id']!=null && $row['id']!=''){
     $id = $row['id'];
 
-    if ($update_stmt = $db->prepare("SELECT * FROM job_details, products WHERE job_details.product = products.id AND job_details.job_id=?")) {
+    if ($update_stmt = $db->prepare("SELECT job_details.*, products.product_name FROM job_details, products WHERE job_details.product = products.id AND job_details.job_id=?")) {
       $update_stmt->bind_param('s', $id);
       
       if ($update_stmt->execute()) {
@@ -52,6 +52,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
             "job_id"=>$row2['job_id'],
             "product"=>$row2['product'],
             "product_name" => $row2['product_name'],
+            "width"=>$row2['width'],
+            "diameter" => $row2['diameter'],
             "quantity"=>$row2['quantity']
           );
         }

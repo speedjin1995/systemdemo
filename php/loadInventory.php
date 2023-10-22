@@ -28,9 +28,9 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select inventory.id, products.product_code, products.product_name, inventory.quantity, inventory.weight, warehouse.warehouse 
-from inventory, products, warehouse WHERE inventory.deleted = '0' AND inventory.product_id = products.id AND warehouse.id = inventory.warehouse".$searchQuery." 
-order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select inventory.id, inventory.diameter, inventory.width, products.product_code, products.product_name, inventory.quantity, inventory.weight, 
+warehouse.warehouse, grade.grade from inventory, products, warehouse, grade WHERE inventory.deleted = '0' AND inventory.product_id = products.id AND warehouse.id = inventory.warehouse 
+AND grade.id = inventory.class".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 $counter = 1;
@@ -39,10 +39,13 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   $data[] = array( 
     "counter"=>$counter,
     "id"=>$row['id'],
+    "diameter"=>$row['diameter'],
+    "width"=>$row['width'],
     "product_code"=>$row['product_code'],
     "product_name"=>$row['product_name'],
     "quantity"=>$row['quantity'],
     "weight"=>$row['weight'],
+    "grade"=>$row['grade'],
     "warehouse"=>$row['warehouse']
   );
 

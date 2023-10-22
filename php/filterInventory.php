@@ -18,12 +18,20 @@ if($_POST['products'] != null && $_POST['products'] != '' && $_POST['products'] 
   $searchQuery = " and inventory.product_id = '".$_POST['products']."'";
 }
 
-if($_POST['warehouse'] != null && $_POST['warehouse'] != '' && $_POST['warehouse'] != '-'){
-  $searchQuery = " and inventory.warehouse like '%".$_POST['warehouse']."%'";
+if($_POST['diameter'] != null && $_POST['diameter'] != '' && $_POST['diameter'] != '-'){
+  $searchQuery = " and inventory.diameter like '%".$_POST['diameter']."%'";
+}
+
+if($_POST['width'] != null && $_POST['width'] != '' && $_POST['width'] != '-'){
+  $searchQuery = " and inventory.width = '".$_POST['width']."'";
+}
+
+if($_POST['grade'] != null && $_POST['grade'] != '' && $_POST['grade'] != '-'){
+  $searchQuery = " and inventory.class like '%".$_POST['grade']."%'";
 }
 
 if($searchValue != ''){
-  $searchQuery = " AND (warehouse.warehouse like '%".$searchValue."%' OR products.product_name like '%".$searchValue."%')";
+  $searchQuery = " AND (products.product_name like '%".$searchValue."%')";
 }
 
 ## Total number of records without filtering
@@ -37,9 +45,9 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select inventory.id, products.product_code, products.product_name, inventory.quantity, inventory.weight, warehouse.warehouse 
-from inventory, products, warehouse WHERE inventory.deleted = '0' AND inventory.product_id = products.id AND warehouse.id = inventory.warehouse".$searchQuery." 
-order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select inventory.id, inventory.diameter, inventory.width, products.product_code, products.product_name, inventory.quantity, inventory.weight, 
+warehouse.warehouse, grade.grade from inventory, products, warehouse, grade WHERE inventory.deleted = '0' AND inventory.product_id = products.id AND warehouse.id = inventory.warehouse 
+AND grade.id = inventory.class".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 $counter = 1;
@@ -48,10 +56,13 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   $data[] = array( 
     "counter"=>$counter,
     "id"=>$row['id'],
+    "diameter"=>$row['diameter'],
+    "width"=>$row['width'],
     "product_code"=>$row['product_code'],
     "product_name"=>$row['product_name'],
     "quantity"=>$row['quantity'],
     "weight"=>$row['weight'],
+    "grade"=>$row['grade'],
     "warehouse"=>$row['warehouse']
   );
 

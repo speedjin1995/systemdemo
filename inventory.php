@@ -11,6 +11,7 @@ else{
   $user = $_SESSION['userID'];
   $products = $db->query("SELECT * FROM products WHERE deleted = '0'");
   $warehouse = $db->query("SELECT * FROM warehouse WHERE deleted = '0'");
+  $grade = $db->query("SELECT * FROM grade WHERE deleted = '0'");
 }
 ?>
 <div class="content-header">
@@ -43,19 +44,27 @@ else{
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="form-group col-md-3">
-                                <div class="form-group">
-                                    <label for="warehouse">Warehouse</label>
-                                    <select class="form-control" id="warehouse" name="warehouse" style="width: 100%;">
-                                        <option selected="selected">-</option>
-                                        <?php while($rowProducts=mysqli_fetch_assoc($warehouse)){ ?>
-                                            <option value="<?=$rowProducts['id'] ?>"><?=$rowProducts['warehouse'] ?></option>
-                                        <?php } ?>
-                                    </select>
-                                </div>
+                            <div class="form-group col-3">
+                                <label>Diameter</label>
+                                <input class="form-control" type="text" id="diameterFilter" placeholder="Diameter">
                             </div>
-                            <div class="form-group col-md-3 mt-32">
+                            <div class="form-group col-3">
+                                <label>Width</label>
+                                <input class="form-control" type="text" id="widthFilter" placeholder="Width">
+                            </div>
+                            <div class="form-group col-3">
+                                <label>Grade</label>
+                                <select class="form-control" id="gradeFilter" name="gradeFilter" style="width: 100%;">
+                                    <option selected="selected">-</option>
+                                    <?php while($rowGrade=mysqli_fetch_assoc($grade)){ ?>
+                                        <option value="<?=$rowGrade['id'] ?>"><?=$rowGrade['grade'] ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-9"></div>
+                            <div class="form-group col-md-3">
                                 <button class="btn btn-success" id="filterSearch"><i class="fas fa-search"></i> Filter</button> 
                             </div>                                            
                         </div>
@@ -76,6 +85,8 @@ else{
 								<tr>
 									<th>No</th>
                                     <th>Product</th>
+                                    <th>Width</th>
+                                    <th>Diameter</th>
 									<th>Quantity</th>
                                     <th>Weight (Kg)</th>
                                     <th>Warehouse</th>
@@ -109,6 +120,8 @@ $(function () {
         'columns': [
             { data: 'counter' },
             { data: 'product_name' },
+            { data: 'width' },
+            { data: 'diameter' },
             { data: 'quantity' },
             { data: 'weight' },
             { data: 'warehouse' }
@@ -212,7 +225,9 @@ $(function () {
         $('#spinnerLoading').show();
 
         var products = $('#products').val() ? $('#products').val() : '';
-        var warehouse = $('#warehouse').val() ? $('#warehouse').val() : '';
+        var diameter = $('#diameterFilter').val() ? $('#diameterFilter').val() : '';
+        var width = $('#widthFilter').val() ? $('#widthFilter').val() : '';
+        var grade = $('#gradeFilter').val() ? $('#gradeFilter').val() : '';
 
         //Destroy the old Datatable
         $("#moistureTable").DataTable().clear().destroy();
@@ -232,12 +247,16 @@ $(function () {
                 'url':'php/filterInventory.php',
                 'data': {
                     products: products,
-                    warehouse: warehouse,
+                    diameter: diameter,
+                    width: width,
+                    grade: grade
                 } 
             },
             'columns': [
                 { data: 'counter' },
                 { data: 'product_name' },
+                { data: 'width' },
+                { data: 'diameter' },
                 { data: 'quantity' },
                 { data: 'weight' },
                 { data: 'warehouse' }
@@ -255,54 +274,6 @@ $(function () {
         });
 
         $('#spinnerLoading').hide();
-    });
-
-    $('#grossWeightSyncBtn').on('click', function(){
-        $.post('http://127.0.0.1:5002/handshaking', function(data){
-            if(data != "Error"){
-                console.log("Data Received:" + data);
-                var temp = data.replace('S', '').replace('D', '').replace('+', '').replace('-', '').replace('g', '').replace('G', '').trim();
-                var str = temp.split(".");
-                var arr=[];
-                
-                for(var i=0; i<str[0].length; i++){
-                    if(str[0].charAt(i).match(re3)){
-                        arr.push(str[0][i]);
-                    }
-                }
-                
-                var text = arr.join("") + "." + str[1];
-                $('#moistureModal').find('#moisturiseGrossWeight').val(parseFloat(text).toFixed(2));
-                $('#moisturiseGrossWeight').trigger('change');
-            }
-            else{
-                toastr["error"]("Failed to get the reading!", "Failed:");
-            }
-        });
-    });
-
-    $('#trayWeightSyncBtn').on('click', function(){
-        $.post('http://127.0.0.1:5002/handshaking', function(data){
-            if(data != "Error"){
-                console.log("Data Received:" + data);
-                var temp = data.replace('S', '').replace('D', '').replace('+', '').replace('-', '').replace('g', '').replace('G', '').trim();
-                var str = temp.split(".");
-                var arr=[];
-                
-                for(var i=0; i<str[0].length; i++){
-                    if(str[0].charAt(i).match(re3)){
-                        arr.push(str[0][i]);
-                    }
-                }
-                
-                var text = arr.join("") + "." + str[1];
-                $('#moistureModal').find('#moisturiseTrayWeight').val(parseFloat(text).toFixed(2));
-                $('#moisturiseTrayWeight').trigger('change');
-            }
-            else{
-                toastr["error"]("Failed to get the reading!", "Failed:");
-            }
-        });
     });
 });
 
