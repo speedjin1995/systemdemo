@@ -35,20 +35,20 @@ if (isset($post['weighing'])) {
 		    if(!in_array($id, $test)){
     			array_push($test, $id);
     	
-    			$check_stmt = $db->prepare("SELECT net, product FROM weighing WHERE id = ?");
+    			$check_stmt = $db->prepare("SELECT net, product, diameter, width, grade FROM weighing WHERE id = ?");
     			$check_stmt->bind_param('s', $id);
     			$check_stmt->execute();
     			$check_stmt->store_result();
     
     			if ($check_stmt->num_rows > 0) {
-    				$check_stmt->bind_result($net, $product_id);
+    				$check_stmt->bind_result($net, $product_id, $diameter, $width, $grade);
     				$check_stmt->fetch();
     				$check_stmt->close();
     
-    				$check_stmt2 = $db->prepare("SELECT id, quantity, weight FROM inventory WHERE product_id = ? AND warehouse = ?");
-    				$check_stmt2->bind_param('ss', $product_id, $warehouse);
-    				$check_stmt2->execute();
-    				$check_stmt2->store_result();
+    				$check_stmt2 = $db->prepare("SELECT id, quantity, weight FROM inventory WHERE product_id = ? AND diameter = ? AND width = ? AND class = ? AND warehouse = ?");
+					$check_stmt2->bind_param('ssssss', $product_id, $basis_weight, $diameter, $width, $grade, $warehouse);
+					$check_stmt2->execute();
+					$check_stmt2->store_result();
     
     				if ($check_stmt2->num_rows > 0) {
     					$check_stmt2->bind_result($inventoryId, $quantity, $oriWeight);

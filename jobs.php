@@ -271,19 +271,41 @@ $(function () {
     });
 });
 
-function format (row) {
+function format(row) {
   var returnString = '';
-  if(row.items != null){
-    returnString += '<p>Items</p><table style="width: 100%;"><thead><tr><th>Product Name</th><th>Diameter</th><th>Width</th><th>Quantity</th></tr></thead><tbody>'
-    
-    for(var i=0; i<row.items.length; i++){
-      returnString += '<tr><td>'+row.items[i].product_name+'</td><td>'+row.items[i].diameter+'</td><td>'+row.items[i].width+'</td><td>'+row.items[i].quantity+'</td></tr>';
+  if (row.items != null) {
+    returnString += '<p>Items</p><table style="width: 100%;"><thead><tr><th>Product Name</th><th>Diameter</th><th>Width</th><th>Quantity</th><th></th></tr></thead><tbody>'
+
+    for (var i = 0; i < row.items.length; i++) {
+      returnString += '<tr><td>' + row.items[i].product_name + '</td><td>' + row.items[i].diameter + '</td><td>' + row.items[i].width + '</td><td>' + row.items[i].quantity + '</td>';
+      returnString += '<td class="table-elipse" data-toggle="collapse" data-target="#weighing' + row.items[i].id + i + '"><i class="fas fa-angle-down"></i></td></tr>';
+      returnString += '<tr class="expandable-content collapse" id="weighing' + row.items[i].id + i + '"><td colspan="5">';
+      returnString += '<table style="width: 100%;"><thead><tr><th>Serial No.</th><th>Staff Name</th></tr></thead><tbody>';
+      
+      for(var j = 0; j < row.items[i].weighing.length; j++){
+        returnString += '<tr><td>'+row.items[i].weighing[j].serial_no+'</td><td>'+row.items[i].weighing[j].name+'</td></tr>';
+      }
+      
+      returnString += '</tbody></table>';
+      returnString += '</td></tr>';
     }
 
     returnString += '</tbody></table>';
   }
-  
+
   return returnString;
+}
+
+function toggleExpandable(button) {
+  var row = button.parentNode.parentNode; // Get the parent row
+  var expandableContent = row.nextElementSibling; // Get the expandable content row
+  if (expandableContent.style.display === "none") {
+    expandableContent.style.display = "table-row";
+    button.innerText = "Collapse";
+  } else {
+    expandableContent.style.display = "none";
+    button.innerText = "Expand";
+  }
 }
 
 function edit(id){

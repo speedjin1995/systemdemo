@@ -47,6 +47,28 @@ while($row = mysqli_fetch_assoc($empRecords)) {
         $result = $update_stmt->get_result();
 
         while ($row2 = $result->fetch_assoc()) {
+          $items2 = array();
+
+          if($row2['id']!=null && $row2['id']!=''){
+            $id2 = $row2['id'];
+        
+            if ($update_stmt2 = $db->prepare("SELECT weighing.serial_no, users.name FROM weighing, users WHERE weighing.staff_name = users.id AND weighing.job_details_id=?")) {
+              $update_stmt2->bind_param('s', $id2);
+              
+              if ($update_stmt2->execute()) {
+                $result2 = $update_stmt2->get_result();
+                $items2 = array();
+        
+                while ($row3 = $result2->fetch_assoc()) {
+                  $items2[] = array(
+                    "serial_no"=>$row3['serial_no'],
+                    "name"=>$row3['name']
+                  );
+                }
+              }
+            }
+          }
+
           $items[] = array(
             "id"=>$row2['id'],
             "job_id"=>$row2['job_id'],
@@ -54,7 +76,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
             "product_name" => $row2['product_name'],
             "width"=>$row2['width'],
             "diameter" => $row2['diameter'],
-            "quantity"=>$row2['quantity']
+            "quantity"=>$row2['quantity'],
+            "weighing"=>$items2
           );
         }
       }

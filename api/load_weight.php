@@ -7,9 +7,9 @@ $post = json_decode(file_get_contents('php://input'), true);
 $now = date("Y-m-d H:i:s");
 
 $stmt = $db->prepare("SELECT weighing.*, products.product_name, products.product_code, products.basis_weight, 
-products.width, products.diameter, products.class, users.name, parent_product.name_en, parent_product.name_ch 
-from products, weighing, users, parent_product WHERE products.product_parents = parent_product.id AND 
-weighing.staff_name = users.id AND weighing.product = products.id AND weighing.deleted = '0'");
+users.name, parent_product.name_en, parent_product.name_ch, grade.grade as class from products, weighing, 
+users, parent_product, grade WHERE products.product_parents = parent_product.id AND weighing.staff_name = users.id 
+AND weighing.product = products.id AND grade.id=weighing.grade AND weighing.deleted = '0'");
 $stmt->execute();
 $result = $stmt->get_result();
 $message = array();

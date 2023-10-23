@@ -9,6 +9,7 @@ if (isset($post['weighing'], $post['createdDatetime'])) {
     $product = $post['weighing'];
     $createdDatetime = $post['createdDatetime'];
     $availability = '0'; // Set the availability value
+    $job_details_id = null; // Set the availability value
     
     for($i=0; $i<count($post['weighing']); $i++){
         $job = $post['weighing'][$i];
@@ -19,8 +20,8 @@ if (isset($post['weighing'], $post['createdDatetime'])) {
         foreach ($weigh_data as $item) {
             $id = $item['id'];
     
-            if ($update_stmt = $db->prepare("UPDATE weighing SET availablility=? WHERE id=?")) {
-                $update_stmt->bind_param('ss', $availability, $id);
+            if ($update_stmt = $db->prepare("UPDATE weighing SET availablility=?, job_details_id=? WHERE id=?")) {
+                $update_stmt->bind_param('sss', $availability, $job_details_id, $id);
                 
                 // Execute the prepared query.
                 if (!$update_stmt->execute()) {
