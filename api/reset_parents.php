@@ -5,6 +5,7 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 session_start();
 $post = json_decode(file_get_contents('php://input'), true);
 $today = date("Y-m-d 00:00:00");
+$currentDateTime = new DateTime();
 $serialNumber = $currentDateTime->format('ymdHi');
 
 if ($insert_stmt = $db->prepare("INSERT INTO mother_rolls (serial_no) VALUES (?)")){

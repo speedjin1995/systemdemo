@@ -285,10 +285,6 @@ else{
       display: flex;
       justify-content:center;
     }
-
-    .expandable-content {
-      display: none;
-    }
   </style>
 </head>
 <!--
