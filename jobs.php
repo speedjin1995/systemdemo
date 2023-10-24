@@ -76,6 +76,14 @@ else{
                   <input type="hidden" class="form-control" id="id" name="id">
                 </div>
                 <div class="form-group">
+                  <label for="units">PO No. </label>
+                  <input type="text" class="form-control" name="poNo" id="poNo" placeholder="Enter PO">
+                </div>
+                <div class="form-group">
+                  <label for="units">DO No. </label>
+                  <input type="text" class="form-control" name="doNo" id="doNo" placeholder="Enter DO">
+                </div>
+                <div class="form-group">
                   <label for="customers">Customers *</label>
                   <select class="form-control" id="customers" name="customers" style="width: 100%;">
                     <option selected="selected">-</option>
@@ -168,7 +176,7 @@ $(function () {
           { 
             data: 'id',
             render: function ( data, type, row ) {
-              return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+              return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="print'+data+'" onclick="print('+data+')" class="btn btn-warning btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
             }
           },
           { 
@@ -228,6 +236,8 @@ $(function () {
         $('#addModal').find('#customers').val("");
         $('#addModal').find('#branchTable').html("");
         $('#addModal').find('#pickedBy').val("");
+        $('#addModal').find('#poNo').val("");
+        $('#addModal').find('#doNo').val("");
         branchCount = 0;
         $('#addModal').modal('show');
         
@@ -317,6 +327,8 @@ function edit(id){
           $('#addModal').find('#id').val(obj.message.id);
           $('#addModal').find('#customers').val(obj.message.customer);
           $('#addModal').find('#pickedBy').val(obj.message.pick_by);
+          $('#addModal').find('#poNo').val(obj.message.po_no);
+          $('#addModal').find('#doNo').val(obj.message.do_no);
 
           $('#addModal').find('#branchTable').html("");
           branchCount = 0;
@@ -364,6 +376,32 @@ function edit(id){
         }
         $('#spinnerLoading').hide();
     });
+}
+
+function print(id) {
+  $.post('php/printDO.php', {userID: id, file: 'weight'}, function(data){
+    var obj = JSON.parse(data);
+
+    if(obj.status === 'success'){
+      var printWindow = window.open('', '', 'height=400,width=800');
+      printWindow.document.write(obj.message);
+      printWindow.document.close();
+      setTimeout(function(){
+        printWindow.print();
+        printWindow.close();
+      }, 500);
+
+      /*$.get('weightPage.php', function(data) {
+        $('#mainContents').html(data);
+      });*/
+    }
+    else if(obj.status === 'failed'){
+      toastr["error"](obj.message, "Failed:");
+    }
+    else{
+      toastr["error"]("Something wrong when activate", "Failed:");
+    }
+  });
 }
 
 function deactivate(id){

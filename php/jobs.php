@@ -14,6 +14,16 @@ if(isset($_POST['customers'], $_POST['pickedBy'])){
     $user = $_SESSION['userID'];
     $today = date("Y-m-d 00:00:00");
     $createdDatetime = date("Y-m-d h:i:s");
+    $poNo = null;
+    $doNo = null;
+
+    if(isset($_POST['poNo']) && $_POST['poNo'] != null && $_POST['poNo'] != ''){
+        $poNo = filter_input(INPUT_POST, 'poNo', FILTER_SANITIZE_STRING);
+    }
+
+    if(isset($_POST['doNo']) && $_POST['doNo'] != null && $_POST['doNo'] != ''){
+        $doNo = filter_input(INPUT_POST, 'doNo', FILTER_SANITIZE_STRING);
+    }
 
     // Branch
     $detailsId = $_POST['detailsId'];
@@ -24,8 +34,8 @@ if(isset($_POST['customers'], $_POST['pickedBy'])){
 
     if($_POST['id'] != null && $_POST['id'] != ''){
         $id = $_POST['id'];
-        if ($update_stmt = $db->prepare("UPDATE jobs SET customer=?, pick_by=? WHERE id=?")) {
-            $update_stmt->bind_param('sss', $customers, $pickedBy, $id);
+        if ($update_stmt = $db->prepare("UPDATE jobs SET po_no=?, do_no=?, customer=?, pick_by=? WHERE id=?")) {
+            $update_stmt->bind_param('sssss', $poNo, $doNo, $customers, $pickedBy, $id);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -107,8 +117,8 @@ if(isset($_POST['customers'], $_POST['pickedBy'])){
         
                 $serialNo .= strval($count);  //S00009
 
-                if ($insert_stmt = $db->prepare("INSERT INTO jobs (job_no, customer, pick_by, created_by, created_datetime) VALUES (?, ?, ?, ?, ?)")) {
-                    $insert_stmt->bind_param('sssss', $serialNo, $customers, $pickedBy, $user, $createdDatetime);
+                if ($insert_stmt = $db->prepare("INSERT INTO jobs (job_no, po_no, do_no, customer, pick_by, created_by, created_datetime) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+                    $insert_stmt->bind_param('sssssss', $serialNo, $poNo, $doNo, $customers, $pickedBy, $user, $createdDatetime);
                     
                     // Execute the prepared query.
                     if (! $insert_stmt->execute()) {

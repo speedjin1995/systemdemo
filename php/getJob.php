@@ -50,6 +50,8 @@ if(isset($_POST['userID'])){
 
                 $message['id'] = $id;
                 $message['customer'] = $row['customer'];
+                $message['po_no'] = $row['po_no'];
+                $message['do_no'] = $row['do_no'];
                 $message['items'] = $items;
                 $message['pick_by'] = $row['pick_by'];
             }
