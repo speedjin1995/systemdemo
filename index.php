@@ -32,7 +32,7 @@ else{
 
   <title>SyncWeight </title>
 
-  <link rel="icon" href="assets/logoSmall.png" type="image">
+  <link rel="icon" href="assets/logo.jpeg" type="image">
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
   <!-- IonIcons -->
