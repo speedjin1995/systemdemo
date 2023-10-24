@@ -26,9 +26,9 @@ while($row = $result->fetch_assoc()){
             $update_stmt->bind_param('s', $id);
             
             if ($update_stmt->execute()) {
-                $result = $update_stmt->get_result();
+                $result2 = $update_stmt->get_result();
 
-                while ($row2 = $result->fetch_assoc()) {
+                while ($row2 = $result2->fetch_assoc()) {
                     $items[] = array(
                         "id"=>$row2['id'],
                         "job_id"=>$row2['job_id'],
@@ -54,7 +54,7 @@ while($row = $result->fetch_assoc()){
             "items" => $items
         );
     }
-    else{
+    else if($row['status'] == 'Picking'){
         $message[] = array( 
             "id"=>$row['id'],
             "job_no"=>$row['job_no'],
