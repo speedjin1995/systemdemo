@@ -306,7 +306,7 @@ to get the desired effect
 
 <div class="wrapper">
   <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-primary navbar-light" >
+  <nav class="main-header navbar navbar-expand navbar-primary navbar-light" style="background-color: white;">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item">
@@ -315,11 +315,11 @@ to get the desired effect
     </ul>
   </nav>
   <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #3d44c1;">
+  <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #ffffff;">
     <!-- Brand Logo -->
-    <a href="#" class="brand-link logo-switch">
+    <a href="#" class="brand-link logo-switch" style="line-height: 3.5;">
       <img src="assets/logoSmall.png" alt="Sneakercube Logo" class="brand-image-xl logo-xs">
-      <img src="assets/logo.jpeg" alt="Sneakercube Logo" class="brand-image-xl logo-xl">
+      <img src="assets/logo.jpeg" alt="Sneakercube Logo" class="brand-image-xl logo-xl" style="width: 70%;max-height: max-content;">
     </a>
 
     <!-- Sidebar -->
