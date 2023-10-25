@@ -32,7 +32,7 @@ else{
 
   <title>SyncWeight </title>
 
-  <link rel="icon" href="assets/logo.jpeg" type="image">
+  <link rel="icon" href="assets/logoSmall2.png" type="image">
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
   <!-- IonIcons -->
@@ -318,7 +318,7 @@ to get the desired effect
   <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #ffffff;">
     <!-- Brand Logo -->
     <a href="#" class="brand-link logo-switch" style="line-height: 3.5;">
-      <img src="assets/logoSmall.png" alt="Sneakercube Logo" class="brand-image-xl logo-xs">
+      <img src="assets/logoSmall2.png" alt="Sneakercube Logo" class="brand-image-xl logo-xs">
       <img src="assets/logo.jpeg" alt="Sneakercube Logo" class="brand-image-xl logo-xl" style="width: 70%;max-height: max-content;">
     </a>
 

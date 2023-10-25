@@ -30,277 +30,329 @@ function totalWeight($strings){
 
 if(isset($_POST['userID'], $_POST["file"])){
     $id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
+    $empQuery = "select jobs.*, customers.customer_name, customers.customer_address, customers.customer_address2, 
+    customers.customer_address3, customers.customer_address4, customers.customer_phone,users.name, jobs.status, jobs.created_datetime 
+    from jobs, users, customers WHERE jobs.deleted = '0' AND users.id = jobs.pick_by AND customers.id = jobs.customer AND jobs.id=
+    ".$id;
+    $empRecords = mysqli_query($db, $empQuery);
+    $data = array();
 
-    if ($select_stmt = $db->prepare("select weighing.*, products.product_code, products.basis_weight, weighing.width, weighing.diameter, grade.grade as class FROM weighing, products, grade WHERE grade.id=weighing.grade AND weighing.product = products.id AND weighing.id=?")) {
-        $select_stmt->bind_param('s', $id);
+    if($row = mysqli_fetch_assoc($empRecords)) {
+        $items = array();
 
-        if (! $select_stmt->execute()) {
-            echo json_encode(
-                array(
-                    "status" => "failed",
-                    "message" => "Something went wrong went execute"
-                )); 
-        }
-        else{
-            $result = $select_stmt->get_result();
+        if($row['id']!=null && $row['id']!=''){
+            $id = $row['id'];
 
-            if ($row = $result->fetch_assoc()) { 
-                $dateAndTime = $row['created_datetime'];
-                list($datePart, $timePart) = explode(" ", $dateAndTime);
-                list($year, $month, $day) = explode("-", $datePart);
-                $date = "$day-$month-$year";
-                $time = $timePart;
-                $serial = $row['serial_no'];
-                $weight = $row['net'].' kg';
-                $productCode = $row['product_code'];
-                $basis_weight = $row['basis_weight'];
-                $width = $row['width'];
-                $diameter = $row['diameter'];
-                $class = $row['class'];
-
-                $message = '<html>
-                <head>
-                    <style>
-                        @media print {
-                            @page {
-                                margin-left: 0.5in;
-                                margin-right: 0.5in;
-                                margin-top: 0.1in;
-                                margin-bottom: 0.1in;
-                            }
-                            
-                        } 
-            
-                        table {
-                            width: 100%;
-                            border-collapse: collapse;
-                            
-                        } 
-                        
-                        .table th, .table td {
-                            padding: 0.70rem;
-                            vertical-align: top;
-                            border-top: 1px solid #dee2e6;
-                            
-                        } 
-                        
-                        .table-bordered {
-                            border: 1px solid #000000;
-                        } 
-                        
-                        .table-bordered th, .table-bordered td {
-                            border: 1px solid #000000;
-                            font-family: sans-serif;
-                        } 
-                        
-                        .row {
-                            display: flex;
-                            flex-wrap: wrap;
-                            margin-top: 20px;
-                        } 
-                        
-                        .col-md-3{
-                            position: relative;
-                            width: 25%;
-                        }
-                        
-                        .col-md-9{
-                            position: relative;
-                            width: 75%;
-                        }
-                        
-                        .col-md-7{
-                            position: relative;
-                            width: 58.333333%;
-                        }
-                        
-                        .col-md-5{
-                            position: relative;
-                            width: 41.666667%;
-                        }
-                        
-                        .col-md-6{
-                            position: relative;
-                            width: 50%;
-                        }
-                        
-                        .col-md-4{
-                            position: relative;
-                            width: 33.333333%;
-                        }
-                        
-                        .col-md-8{
-                            position: relative;
-                            width: 66.666667%;
-                        }
-                        
-                        #footer {
-                            position: fixed;
-                            padding: 10px 10px 0px 10px;
-                            bottom: 0;
-                            width: 100%;
-                            height: 30%;
-                        }
-            
-                        #print-button {
-                            position: fixed;
-                            bottom: 10px;
-                            left: 10px;
-                            padding: 10px;
-                            background-color: #007bff;
-                            color: #fff;
-                            cursor: pointer;
-                            border-radius: 5px;
-                        }
-                    </style>
-                </head>
+            if ($update_stmt = $db->prepare("SELECT job_details.*, products.product_name, products.basis_weight FROM job_details, products WHERE job_details.product = products.id AND job_details.job_id=?")) {
+                $update_stmt->bind_param('s', $id);
                 
-                <body>
-                    <table class="table">
-                        <tbody>
-                            <tr style="border: 1px solid #000000;">
-                                <td style="width: 55%;border-top:0px;">
-                                    <p>
-                                        <span style="font-size: 36px;font-family: sans-serif;font-weight: bold;">精牛原纸</span>
-                                    </p>
-                                </td>
-                                <td style="width: 45%;border-top:0px;">
-                                    <p>
-                                        <span style="font-size: 18px;font-family: sans-serif;">口 合格证</span><br>
-                                        <span style="font-size: 16px;font-family: sans-serif;">Quality Certificate</span><br>
-                                        <span style="font-size: 16px;font-family: sans-serif;">('.$serial.')</span>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width: 55%;border-top:3px;">
-                                    <p>
-                                        <span style="font-size: 20px;font-family: sans-serif;">Time : '.$time.'</span>
-                                    </p>
-                                </td>
-                                <td style="width: 45%;border-top:3px;">
-                                    <p>
-                                        <span style="font-size: 20px;font-family: sans-serif;">DATE : '.$date.'</span>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width: 55%;border-top:0px;"></td>
-                                <td style="width: 45%;border-top:0px;"></td>
-                            </tr>
-                            <tr>
-                                <td style="width: 55%;border-top:0px;"></td>
-                                <td style="width: 45%;border-top:0px;"></td>
-                            </tr>
-                            <tr style="border: 1px solid #000000;">
-                                <td style="width: 55%;border-top:0px;">
-                                    <p>
-                                        <span style="font-size: 24px;font-family: sans-serif;">产品编号 Product No.</span>
-                                    </p>
-                                </td>
-                                <td style="width: 45%;border-top:0px;">
-                                    <p>
-                                        <span style="font-size: 24px;font-family: sans-serif;">定量 BASIS WEIGHT C/M2</span>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width: 55%;border-top:3px;">
-                                    <img src="assets/barcode2.png" alt="Girl in a jacket" width="50%">
-                                    <p style="margin-top: 0px;">
-                                        <span style="font-size: 16px;font-family: sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$productCode.'</span>
-                                    </p>
-                                </td>
-                                <td style="width: 45%;border-top:3px;">
-                                    <p>
-                                        <span style="font-size: 20px;font-family: sans-serif;">'.$basis_weight.'</span>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="border: 1px solid #000000;">
-                                <td style="width: 55%;border-top:0px;">
-                                    <p>
-                                        <span style="font-size: 24px;font-family: sans-serif;">宽度 WIDTH MM</span>
-                                    </p>
-                                </td>
-                                <td style="width: 45%;border-top:0px;">
-                                    <p>
-                                        <span style="font-size: 24px;font-family: sans-serif;">直径 DIAMETER MM</span>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width: 55%;border-top:3px;">
-                                    <p>
-                                        <span style="font-size: 24px;font-family: sans-serif;">'.$width.'</span>
-                                    </p>
-                                </td>
-                                <td style="width: 45%;border-top:3px;">
-                                    <p>
-                                        <span style="font-size: 26px;font-family: sans-serif;">'.$diameter.'</span>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width: 55%;border-top:0px;"></td>
-                                <td style="width: 45%;border-top:0px;"></td>
-                            </tr>
-                            <tr>
-                                <td style="width: 55%;border-top:0px;"></td>
-                                <td style="width: 45%;border-top:0px;"></td>
-                            </tr>
-                            <tr style="border: 1px solid #000000;">
-                                <td style="width: 55%;border-top:0px;">
-                                    <p>
-                                        <span style="font-size: 20px;font-family: sans-serif;">质量 WEIGHT KG</span>
-                                    </p>
-                                </td>
-                                <td style="width: 45%;border-top:0px;">
-                                    <p>
-                                        <span style="font-size: 20px;font-family: sans-serif;">产品等级 PRODUCT CLASS</span>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="width: 55%;border-top:3px;">
-                                    <img src="assets/barcode2.png" alt="Girl in a jacket" width="50%">
-                                    <p style="margin-top: 0px;">
-                                        <span style="font-size: 16px;font-family: sans-serif;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$weight.'</span>
-                                    </p>
-                                </td>
-                                <td style="width: 45%;border-top:3px;">
-                                    <p>
-                                        <span style="font-size: 24px;font-family: sans-serif;">'.$class.'</span>
-                                    </p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </body>
-            </html>';
+                if ($update_stmt->execute()) {
+                    $result = $update_stmt->get_result();
 
-                echo json_encode(
-                    array(
-                        "status" => "success",
-                        "message" => $message
-                    )
-                );
-            }
-            else{
-                echo json_encode(
-                    array(
-                        "status" => "failed",
-                        "message" => "Data Not Found"
-                    )); 
+                    while ($row2 = $result->fetch_assoc()) {
+                        $items2 = array();
+
+                        if($row2['id']!=null && $row2['id']!=''){
+                            $id2 = $row2['id'];
+                        
+                            if ($update_stmt2 = $db->prepare("SELECT * FROM weighing WHERE job_details_id=?")) {
+                                $update_stmt2->bind_param('s', $id2);
+                                
+                                if ($update_stmt2->execute()) {
+                                    $result2 = $update_stmt2->get_result();
+                                    $items2 = array();
+                            
+                                    while ($row3 = $result2->fetch_assoc()) {
+                                        $items2[] = array(
+                                            "serial_no"=>$row3['serial_no'],
+                                            "net"=>$row3['net']
+                                        );
+                                    }
+                                }
+                            }
+                        }
+
+                        $items[] = array(
+                            "id"=>$row2['id'],
+                            "job_id"=>$row2['job_id'],
+                            "product"=>$row2['product'],
+                            "product_name" => $row2['product_name'],
+                            "basis_weight"=>$row2['basis_weight'],
+                            "width"=>$row2['width'],
+                            "diameter" => $row2['diameter'],
+                            "quantity"=>$row2['quantity'],
+                            "weighing"=>$items2
+                        );
+                    }
+                }
             }
         }
+
+        $data[] = array( 
+            "id"=>$row['id'],
+            "job_no"=>$row['job_no'],
+            "po_no" => $row['po_no'],
+            "do_no" => $row['do_no'],
+            "customer_name" => $row['customer_name'],
+            "customer_address" => $row['customer_address'],
+            "customer_address2" => $row['customer_address2'],
+            "customer_address3" => $row['customer_address3'],
+            "customer_address4" => $row['customer_address4'],
+            "customer_phone" => $row['customer_phone'],
+            "items" => $items
+        );
+    }
+
+    if($data!=null && count($data) > 0){
+        $message = '<html>
+            <head>
+                <style>
+                    @media print {
+                        @page {
+                            margin-left: 0.5in;
+                            margin-right: 0.5in;
+                            margin-top: 0.1in;
+                            margin-bottom: 0.1in;
+                        }
+                        
+                    } 
+        
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        
+                    } 
+                    
+                    .table th, .table td {
+                        padding: 0.70rem;
+                        vertical-align: top;
+                        border-top: 1px solid #dee2e6;
+                        
+                    } 
+                    
+                    .table-bordered {
+                        border: 1px solid #000000;
+                    } 
+                    
+                    .table-bordered th, .table-bordered td {
+                        border: 1px solid #000000;
+                        font-family: sans-serif;
+                    } 
+                    
+                    .row {
+                        display: flex;
+                        flex-wrap: wrap;
+                        margin-top: 20px;
+                    } 
+                    
+                    .col-md-3{
+                        position: relative;
+                        width: 25%;
+                    }
+                    
+                    .col-md-9{
+                        position: relative;
+                        width: 75%;
+                    }
+                    
+                    .col-md-7{
+                        position: relative;
+                        width: 58.333333%;
+                    }
+                    
+                    .col-md-5{
+                        position: relative;
+                        width: 41.666667%;
+                    }
+                    
+                    .col-md-6{
+                        position: relative;
+                        width: 50%;
+                    }
+                    
+                    .col-md-4{
+                        position: relative;
+                        width: 33.333333%;
+                    }
+                    
+                    .col-md-8{
+                        position: relative;
+                        width: 66.666667%;
+                    }
+                    
+                    #footer {
+                        position: fixed;
+                        padding: 10px 10px 0px 10px;
+                        bottom: 0;
+                        width: 100%;
+                        height: 30%;
+                    }
+        
+                    #print-button {
+                        position: fixed;
+                        bottom: 10px;
+                        left: 10px;
+                        padding: 10px;
+                        background-color: #007bff;
+                        color: #fff;
+                        cursor: pointer;
+                        border-radius: 5px;
+                    }
+                </style>
+            </head>
+            
+            <body>
+                <div>
+                    <div style="font-size: 14px; padding-left: 5px;">
+                        <div>
+                            <h1 style="display:inline">TSP 3G SDN. BHD.(1282904-U)</h1>
+                        </div>
+                        <div>32nd Miles, Jalan Ipoh, 44200 Rasa, Hulu Selangor, Selangor Darul Ehsan, Malaysia.</div>
+                        <div>T: 03-60573101, 03-60573102 &nbsp;&nbsp;&nbsp;&nbsp;F : 03-60573250  &nbsp;&nbsp;&nbsp;&nbsp;E : tsp3g@hotmail.com</div>
+                    </div>
+                </div><br>
+                <h2><u>Packing List</u></h2>
+                <div>
+                    <div style="font-size: 14px; padding-left: 5px;">
+                        <div>
+                            <h2 style="display:inline">'.$data[0]['customer_name'].'</h2>
+                        </div>
+                        <div>'.$data[0]['customer_address'].'</div>
+                        <div>'.$data[0]['customer_address2'].'</div>
+                        <div>'.$data[0]['customer_address3'].'</div>
+                        <div>'.$data[0]['customer_address4'].'</div>
+                        <div>TEL : '.$data[0]['customer_phone'].' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fax : 03-77838633</div>
+                    </div>
+                </div><br>
+                <div>
+                    <div style="font-size: 14px; padding-left: 5px;">
+                        <div><b>Delivery Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</b> -</div>
+                        <div><b>Product Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</b> '.$data[0]['items'][0]['product_name'].'</div>
+                        <div><b>Delivery Note No. &nbsp;&nbsp;:</b> '.$data[0]['do_no'].'</div>
+                        <div><b>P/O No &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</b> '.$data[0]['po_no'].'</div>
+                    </div>
+                </div><br><br>
+                <table>
+                    <tbody>';
+
+                    for($i=0; $i<count($data[0]['items']); $i++){
+                        if($i % 2 == 0){
+                            $message .= '<tr><td width="50%"><table>
+                                    <thead>
+                                        <tr>
+                                            <th colspan="4"><u>'.$data[0]['items'][$i]['basis_weight'].'GSM - '.$data[0]['items'][$i]['width'].'MM</u></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>';
+
+                                        $count = 1;
+                                        $totalNet = 0.00;
+
+                                        for($j=0; $j<count($data[0]['items'][$i]['weighing']); $j++){
+                                            $message .= '<td>
+                                                    Roll No '.$count.'
+                                                </td>
+                                                <td>
+                                                    '.$data[0]['items'][$i]['weighing'][$j]['serial_no'].'
+                                                </td>
+                                                <td>
+                                                    '.$data[0]['items'][$i]['weighing'][$j]['net'].'
+                                                </td>
+                                                <td>
+                                                    kgs
+                                                </td>
+                                            </tr>';
+
+                                            $totalNet += (float)$data[0]['items'][$i]['weighing'][$j]['net'];
+                                            $count++;
+                                        }
+                                    $message .= '</tbody><tfoot>
+                                    <tr>
+                                        <td colspan="2"></td>
+                                        <td style="border-top: 1px solid black;border-bottom: 1px solid black;">
+                                            '.$totalNet.'
+                                        </td>
+                                        <td style="border-top: 1px solid black;border-bottom: 1px solid black;">
+                                            kgs
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>';
+
+                            $message .= '</td>';
+                        }
+                        else{
+                            $message .= '<td width="50%"><table>
+                                    <thead>
+                                        <tr>
+                                            <th colspan="4"><u>'.$data[0]['items'][$i]['basis_weight'].'GSM - '.$data[0]['items'][$i]['width'].'MM</u></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>';
+
+                                        $count = 1;
+                                        $totalNet = 0.00;
+
+                                        for($j=0; $j<count($data[0]['items'][$i]['weighing']); $j++){
+                                            $message .= '<td>
+                                                    Roll No '.$count.'
+                                                </td>
+                                                <td>
+                                                    '.$data[0]['items'][$i]['weighing'][$j]['serial_no'].'
+                                                </td>
+                                                <td>
+                                                    '.$data[0]['items'][$i]['weighing'][$j]['net'].'
+                                                </td>
+                                                <td>
+                                                    kgs
+                                                </td>
+                                            </tr>';
+
+                                            $totalNet += (float)$data[0]['items'][$i]['weighing'][$j]['net'];
+                                            $count++;
+                                        }
+                                    $message .= '</tbody><tfoot>
+                                    <tr>
+                                        <td colspan="2"></td>
+                                        <td style="border-top: 1px solid black;border-bottom: 1px solid black;">
+                                            '.$totalNet.'
+                                        </td>
+                                        <td style="border-top: 1px solid black;border-bottom: 1px solid black;">
+                                            kgs
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>';
+
+                            $message .= '</td></tr>';
+                        }
+                    }
+                      
+                    if(count($data[0]['items']) % 2 != 0){
+                        $message .= '<td></td></tr>';
+                    }
+                        
+                    $message .= '</tbody>
+                </table>
+            </body>
+        </html>';
+
+        echo json_encode(
+            array(
+                "status" => "success",
+                "message" => $message
+            )
+        ); 
     }
     else{
         echo json_encode(
             array(
                 "status" => "failed",
-                "message" => "Something went wrong"
-            )); 
+                "message" => "Data Not Found"
+            )
+        ); 
     }
 }
 else{
