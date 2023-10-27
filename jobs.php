@@ -405,6 +405,7 @@ function print(id) {
 }
 
 function deactivate(id){
+  if (confirm('Are you sure you want to delete this items?')) {
     $('#spinnerLoading').show();
     $.post('php/deleteJobs.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
@@ -423,5 +424,6 @@ function deactivate(id){
             $('#spinnerLoading').hide();
         }
     });
+  }
 }
 </script>
