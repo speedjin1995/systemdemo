@@ -30,6 +30,10 @@ if($_POST['grade'] != null && $_POST['grade'] != '' && $_POST['grade'] != '-'){
   $searchQuery = " and inventory.class like '%".$_POST['grade']."%'";
 }
 
+if($_POST['basisWeight'] != null && $_POST['basisWeight'] != '' && $_POST['basisWeight'] != '-'){
+  $searchQuery = " and inventory.basis_weight like '%".$_POST['basisWeight']."%'";
+}
+
 if($searchValue != ''){
   $searchQuery = " AND (products.product_name like '%".$searchValue."%')";
 }

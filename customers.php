@@ -95,6 +95,10 @@ else{
                   <label for="address">Address 4</label>
                   <input type="text" class="form-control" name="address4" id="address4" placeholder="Enter  Address">
                 </div>
+                <div class="form-group"> 
+                  <label for="address">Country</label>
+                  <input type="text" class="form-control" name="country" id="country" placeholder="Enter Country">
+                </div>
                 <div class="form-group">
                   <label for="phone">Phone *</label>
                   <input type="text" class="form-control" name="phone" id="phone" placeholder="01x-xxxxxxx" required>
@@ -178,6 +182,7 @@ $(function () {
         $('#addModal').find('#address2').val("");
         $('#addModal').find('#address3').val("");
         $('#addModal').find('#address4').val("");
+        $('#addModal').find('#country').val("")
         $('#addModal').find('#phone').val("");
         $('#addModal').find('#email').val("");
         $('#addModal').modal('show');
@@ -211,6 +216,7 @@ function edit(id){
             $('#addModal').find('#address2').val(obj.message.customer_address2);
             $('#addModal').find('#address3').val(obj.message.customer_address3);
             $('#addModal').find('#address4').val(obj.message.customer_address4);
+            $('#addModal').find('#country').val(obj.message.country);
             $('#addModal').find('#phone').val(obj.message.customer_phone);
             $('#addModal').find('#email').val(obj.message.pic);
             $('#addModal').modal('show');

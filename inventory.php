@@ -33,7 +33,7 @@ else{
                 <div class="card">
                     <div class="card-body">  
                         <div class="row">
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-4">
                                 <div class="form-group">
                                     <label for="products">Product</label>
                                     <select class="form-control" id="products" name="products" style="width: 100%;">
@@ -44,15 +44,19 @@ else{
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group col-3">
+                            <div class="form-group col-4">
+                                <label>Basis Weight</label>
+                                <input class="form-control" type="text" id="basisWeightFilter" placeholder="Basis Weight">
+                            </div>
+                            <div class="form-group col-4">
                                 <label>Diameter</label>
                                 <input class="form-control" type="text" id="diameterFilter" placeholder="Diameter">
                             </div>
-                            <div class="form-group col-3">
+                            <div class="form-group col-4">
                                 <label>Width</label>
                                 <input class="form-control" type="text" id="widthFilter" placeholder="Width">
                             </div>
-                            <div class="form-group col-3">
+                            <div class="form-group col-4">
                                 <label>Grade</label>
                                 <select class="form-control" id="gradeFilter" name="gradeFilter" style="width: 100%;">
                                     <option selected="selected">-</option>
@@ -61,12 +65,9 @@ else{
                                     <?php } ?>
                                 </select>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md-9"></div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-4">
                                 <button class="btn btn-success" id="filterSearch"><i class="fas fa-search"></i> Filter</button> 
-                            </div>                                            
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -225,6 +226,7 @@ $(function () {
         $('#spinnerLoading').show();
 
         var products = $('#products').val() ? $('#products').val() : '';
+        var basisWeight = $('#basisWeightFilter').val() ? $('#basisWeightFilter').val() : '';
         var diameter = $('#diameterFilter').val() ? $('#diameterFilter').val() : '';
         var width = $('#widthFilter').val() ? $('#widthFilter').val() : '';
         var grade = $('#gradeFilter').val() ? $('#gradeFilter').val() : '';
@@ -246,6 +248,7 @@ $(function () {
                 'type': 'POST',
                 'url':'php/filterInventory.php',
                 'data': {
+                    basisWeight: basisWeight,
                     products: products,
                     diameter: diameter,
                     width: width,
