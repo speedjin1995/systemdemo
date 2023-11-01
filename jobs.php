@@ -32,17 +32,20 @@ else{
     <div class="row">
 			<div class="col-12">
 				<div class="card">
-					<div class="card-header">
+					<div class="card-header" style="background-color: #1360a8;">
             <div class="row">
               <div class="col-9"></div>
               <div class="col-3">
-                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addProducts">Add Jobs</button>
+                <button type="button" class="btn btn-block btn-sm" id="addProducts" style="background-color: #75c251;">
+                  <i class="fas fa-plus"></i>
+                  Add Jobs
+                </button>
               </div>
             </div>
           </div>
 					<div class="card-body">
 						<table id="productTable" class="table table-bordered table-striped">
-							<thead>
+							<thead style="background-color: #1360a8;">
 								<tr>
                   <th>Job No.</th>
                   <th>Customer</th>
@@ -284,13 +287,13 @@ $(function () {
 function format(row) {
   var returnString = '';
   if (row.items != null) {
-    returnString += '<p>Items</p><table style="width: 100%;"><thead style="background-color: #007bffbd;"><tr><th>Product Name</th><th>Diameter</th><th>Width</th><th>Quantity</th><th></th></tr></thead><tbody>'
+    returnString += '<p>Items</p><table style="width: 100%;"><thead style="background-color: #10a666;"><tr><th>Product Name</th><th>Diameter</th><th>Width</th><th>Quantity</th><th></th></tr></thead><tbody>'
 
     for (var i = 0; i < row.items.length; i++) {
       returnString += '<tr><td>' + row.items[i].product_name + '</td><td>' + row.items[i].diameter + '</td><td>' + row.items[i].width + '</td><td>' + row.items[i].quantity + '</td>';
       returnString += '<td class="table-elipse" data-toggle="collapse" data-target="#weighing' + row.items[i].id + i + '"><i class="fas fa-angle-down"></i></td></tr>';
       returnString += '<tr class="expandable-content collapse" id="weighing' + row.items[i].id + i + '"><td colspan="5">';
-      returnString += '<table style="width: 100%;"><thead style="background-color: #007bff7d;"><tr><th>Serial No.</th><th>Staff Name</th></tr></thead><tbody>';
+      returnString += '<table style="width: 100%;"><thead style="background-color: #75c34d;"><tr><th>Serial No.</th><th>Staff Name</th></tr></thead><tbody>';
       
       for(var j = 0; j < row.items[i].weighing.length; j++){
         returnString += '<tr><td>'+row.items[i].weighing[j].serial_no+'</td><td>'+row.items[i].weighing[j].name+'</td></tr>';

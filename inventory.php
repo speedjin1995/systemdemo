@@ -82,7 +82,7 @@ else{
                     </div-->
 					<div class="card-body">     
 						<table id="moistureTable" class="table table-bordered table-striped">
-							<thead>
+							<thead style="background-color: #1360a8;">
 								<tr>
 									<th>No</th>
                                     <th>Product</th>

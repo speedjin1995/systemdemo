@@ -133,7 +133,7 @@ else{
 
       <div class="col-lg-12">
         <div class="card card-primary">
-          <div class="card-header">
+          <div class="card-header"  style="background-color: #1360a8;">
             <!--div class="row">
               <div class="col-6"></div>
               <div class="col-3">
@@ -147,7 +147,7 @@ else{
 
           <div class="card-body">
             <table id="weightTable" class="table table-bordered table-striped display">
-              <thead>
+              <thead  style="background-color: #1360a8;">
                 <tr>
                   <th>No</th>
                   <th>Serials</th>

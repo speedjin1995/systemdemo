@@ -29,17 +29,20 @@ else{
         <div class="row">
 			<div class="col-12">
 				<div class="card">
-					<div class="card-header">
+					<div class="card-header" style="background-color: #1360a8;">
                         <div class="row">
                             <div class="col-9"></div>
                             <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addUnits">Add Warehouse</button>
+                                <button type="button" class="btn btn-block btn-sm" id="addUnits" style="background-color: #75c251;">
+                                    <i class="fas fa-plus"></i>
+                                    Add Warehouse
+                                </button>
                             </div>
                         </div>
                     </div>
 					<div class="card-body">
 						<table id="unitTable" class="table table-bordered table-striped">
-							<thead>
+							<thead style="background-color: #1360a8;">
 								<tr>
 									<th>No.</th>
 									<th>Warehouse</th>

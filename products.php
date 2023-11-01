@@ -30,17 +30,20 @@ else{
         <div class="row">
 			<div class="col-12">
 				<div class="card">
-					<div class="card-header">
+					<div class="card-header" style="background-color: #1360a8;">
                         <div class="row">
                             <div class="col-9"></div>
                             <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addProducts">Add Products</button>
+                                <button type="button" class="btn btn-block btn-sm" id="addProducts" style="background-color: #75c251;">
+                                    <i class="fas fa-plus"></i>    
+                                    Add Products
+                                </button>
                             </div>
                         </div>
                     </div>
 					<div class="card-body">
 						<table id="productTable" class="table table-bordered table-striped">
-							<thead>
+							<thead style="background-color: #1360a8;">
 								<tr>
                                     <th>Product Code</th>
 									<th>Product Name</th>
