@@ -476,12 +476,12 @@ to get the desired effect
                 </a>
               </li-->
 
-              <li class="nav-item">
+              <!--li class="nav-item">
                 <a href="#myprofile" data-file="myprofile.php" class="nav-link link">
                   <i class="nav-icon fas fa-id-badge"></i>
                   <p>Profile</p>
                 </a>
-              </li>
+              </li-->
           
               <li class="nav-item">
                 <a href="#changepassword" data-file="changePassword.php" class="nav-link link">
