@@ -86,8 +86,10 @@ else{
 								<tr>
 									<th>No</th>
                                     <th>Product</th>
+                                    <th>Basis Weight</th>
                                     <th>Width</th>
                                     <th>Diameter</th>
+                                    <th>Grade</th>
 									<th>Quantity</th>
                                     <th>Weight (Kg)</th>
                                     <th>Warehouse</th>
@@ -121,8 +123,10 @@ $(function () {
         'columns': [
             { data: 'counter' },
             { data: 'product_name' },
+            { data: 'basis_weight' },
             { data: 'width' },
             { data: 'diameter' },
+            { data: 'grade' },
             { data: 'quantity' },
             { data: 'weight' },
             { data: 'warehouse' }
@@ -258,8 +262,10 @@ $(function () {
             'columns': [
                 { data: 'counter' },
                 { data: 'product_name' },
+                { data: 'basis_weight' },
                 { data: 'width' },
                 { data: 'diameter' },
+                { data: 'grade' },
                 { data: 'quantity' },
                 { data: 'weight' },
                 { data: 'warehouse' }
