@@ -97,19 +97,19 @@ else{
                 </div>
                 <div class="form-group">
                   <label for="product">Basis Weight *</label>
-                  <input type="text" class="form-control" name="basis" id="basis" placeholder="Enter Product Weight" required>
+                  <input type="text" class="form-control" name="basis" id="basis" placeholder="Enter Product Weight" >
                 </div>
                 <div class="form-group">
                   <label for="product">Width *</label>
-                  <input type="text" class="form-control" name="width" id="width" placeholder="Enter Product width" required>
+                  <input type="text" class="form-control" name="width" id="width" placeholder="Enter Product width" >
                 </div>
                 <div class="form-group">
                   <label for="product">Diameter *</label>
-                  <input type="text" class="form-control" name="diameter" id="diameter" placeholder="Enter Product diameter" required>
+                  <input type="text" class="form-control" name="diameter" id="diameter" placeholder="Enter Product diameter" >
                 </div>
                 <div class="form-group">
                   <label for="product">Class *</label>
-                  <input type="text" class="form-control" name="class" id="class" placeholder="Enter Product class" required>
+                  <input type="text" class="form-control" name="class" id="class" placeholder="Enter Product class" >
                 </div>
               </div>
             </div>

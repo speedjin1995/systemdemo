@@ -49,7 +49,7 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select inventory.id, inventory.basis_weight, inventory.diameter, inventory.width, products.product_code, products.product_name, inventory.quantity, inventory.weight, 
+$empQuery = "select inventory.id, inventory.diameter, inventory.width, products.product_code, products.product_name, inventory.quantity, inventory.weight, 
 warehouse.warehouse, grade.grade from inventory, products, warehouse, grade WHERE inventory.deleted = '0' AND inventory.product_id = products.id AND warehouse.id = inventory.warehouse 
 AND grade.id = inventory.class".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
@@ -60,7 +60,6 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   $data[] = array( 
     "counter"=>$counter,
     "id"=>$row['id'],
-    "basis_weight"=>$row['basis_weight'],
     "diameter"=>$row['diameter'],
     "width"=>$row['width'],
     "product_code"=>$row['product_code'],

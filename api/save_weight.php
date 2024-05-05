@@ -34,6 +34,17 @@ if(isset($post['status'], $post['product'], $post['weight'], $post['tare'], $pos
 	$warehouse = '1';
 	$serialNo = '0';
 	$today = date("Y-m-d 00:00:00");
+	$currentDateTime = new DateTime();
+    $serialNumber = $currentDateTime->format('ymdHi');
+    
+    if(!isset($post['mothers']) || $post['mothers'] == null || $post['mothers'] == ''){
+        if ($insert_stmt_mother = $db->prepare("INSERT INTO mother_rolls (serial_no) VALUES (?)")){
+        	$insert_stmt_mother->bind_param('s', $serialNumber);
+            $insert_stmt_mother->execute();
+    		$insert_stmt_mother->close();
+    		$mothers = $serialNumber;
+        }
+    }
 
 	if(!isset($post['serialNo']) || $post['serialNo'] == null || $post['serialNo'] == ''){
 		$serialNo = $mothers.$shiftCode;
@@ -119,7 +130,8 @@ if(isset($post['status'], $post['product'], $post['weight'], $post['tare'], $pos
 				array(
 					"status" => "success", 
 					"message" => "Added Successfully!!",
-					"serial" => $serialNo
+					"serial" => $serialNo,
+					"mothers" => $mothers
 				)
 			);
 		}
