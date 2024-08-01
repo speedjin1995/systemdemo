@@ -5,9 +5,18 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 session_start();
 $post = json_decode(file_get_contents('php://input'), true);
 
+$services = 'Save_Weight';
+$requests = json_encode($post);
+
+$stmtL = $db->prepare("INSERT INTO api_requests (services, request) VALUES (?, ?)");
+$stmtL->bind_param('ss', $services, $requests);
+$stmtL->execute();
+$invid = $stmtL->insert_id;
+
 if(isset($post['status'], $post['product'], $post['weight'], $post['tare'], $post['mothers']
 , $post['net'], $post['shift'], $post['staffName'], $post['createdDatetime'], $post['grade']
-, $post['productCode'], $post['productCode'], $post['diameter'], $post['width'], $post['basis_weight'])){
+, $post['productCode'], $post['productCode'], $post['diameter'], $post['width'], $post['basis_weight']
+, $post['serialNo'])){
 	$mothers = $post['mothers'];
 	$status = $post['status'];
 	$product = $post['product'];
@@ -16,6 +25,8 @@ if(isset($post['status'], $post['product'], $post['weight'], $post['tare'], $pos
 	$net = $post['net'];
 	$grade = $post['grade'];
 	$shift = $post['shift'];
+	$serialNo = $post['serialNo'];
+	$serialNoOld = $post['serialNo'];
 	$shiftCode = 'D';
 
 	if($shift == 'Morning'){
@@ -32,7 +43,6 @@ if(isset($post['status'], $post['product'], $post['weight'], $post['tare'], $pos
 	$width = $post['width'];
 	$basis_weight = $post['basis_weight'];
 	$warehouse = '1';
-	$serialNo = '0';
 	$today = date("Y-m-d 00:00:00");
 	$currentDateTime = new DateTime();
     $serialNumber = $currentDateTime->format('ymdHi');
@@ -46,7 +56,7 @@ if(isset($post['status'], $post['product'], $post['weight'], $post['tare'], $pos
         }
     }
 
-	if(!isset($post['serialNo']) || $post['serialNo'] == null || $post['serialNo'] == ''){
+	/*if(!isset($post['serialNo']) || $post['serialNo'] == null || $post['serialNo'] == ''){
 		$serialNo = $mothers.$shiftCode;
 
 		if ($select_stmt = $db->prepare("SELECT COUNT(*) FROM weighing WHERE mother_serials=? AND created_datetime >= ?")) {
@@ -78,7 +88,7 @@ if(isset($post['status'], $post['product'], $post['weight'], $post['tare'], $pos
                 $serialNo .= strval($count);  //S009
 			}
 		}
-	}
+	}*/
 
 	if ($insert_stmt = $db->prepare("INSERT INTO weighing (mother_serials, serial_no, status, product, diameter, width, grade, weight, tare, net, shift, staff_name, created_datetime) 
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
@@ -123,27 +133,71 @@ if(isset($post['status'], $post['product'], $post['weight'], $post['tare'], $pos
 				$insert_inventory_stmt->execute();
 				$insert_inventory_stmt->close();
 			}
-
-			$db->close();
-
-			echo json_encode(
+			
+			// Generate new Serial No.
+			$serialNo = $mothers.$shiftCode;
+			
+			if ($select_stmt1 = $db->prepare("SELECT COUNT(*) FROM weighing WHERE mother_serials=? AND created_datetime >= ?")) {
+                $select_stmt1->bind_param('ss', $mothers, $today);
+                
+                // Execute the prepared query.
+                if (! $select_stmt1->execute()) {
+                    echo json_encode(
+                        array(
+                            "status" => "failed",
+                            "message" => "Failed to get latest count"
+                        )); 
+                }
+                else{
+                    $result = $select_stmt1->get_result();
+                    $count = 1;
+                    
+                    if ($row = $result->fetch_assoc()) {
+                        $count = (int)$row['COUNT(*)'] + 1;
+                        $select_stmt1->close();
+                    }
+    
+                    $charSize = strlen(strval($count));
+    
+                    for($i=0; $i<(3-(int)$charSize); $i++){
+                        $serialNo.='0';  // S00
+                    }
+            
+                    $serialNo .= strval($count);  //S009
+    			}
+    		}
+    		
+    		$response = json_encode(
 				array(
 					"status" => "success", 
 					"message" => "Added Successfully!!",
 					"serial" => $serialNo,
+					"serialOld" => $serialNoOld,
 					"mothers" => $mothers
 				)
 			);
+    		$stmtU = $db->prepare("UPDATE api_requests SET response = ? WHERE id = ?");
+            $stmtU->bind_param('ss', $response, $invid);
+            $stmtU->execute();
+
+			$db->close();
+			echo $response;
 		}
 	}
 }
 else{
-    echo json_encode(
-        array(
+    $response = json_encode(
+		array(
             "status"=> "failed", 
             "message"=> "Please fill in all the fields"
         )
-    );     
+	);
+	$stmtU = $db->prepare("UPDATE api_requests SET response = ? WHERE id = ?");
+    $stmtU->bind_param('ss', $response, $invid);
+    $stmtU->execute();
+
+	$db->close();
+	echo $response;
 }
 
 ?>

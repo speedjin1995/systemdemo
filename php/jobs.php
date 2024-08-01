@@ -26,11 +26,11 @@ if(isset($_POST['customers'], $_POST['pickedBy'])){
     }
 
     // Branch
-    $detailsId = $_POST['detailsId'];
-    $product = $_POST['product'];
-    $width = $_POST['width'];
-    $diameter = $_POST['diameter'];
-    $quantity = $_POST['quantity'];
+    $detailsId = $_POST['detailsId'] ?? [];
+    $product = $_POST['product'] ?? [];
+    $width = $_POST['width'] ?? [];
+    $diameter = $_POST['diameter'] ?? [];
+    $quantity = $_POST['quantity'] ?? [];
 
     if($_POST['id'] != null && $_POST['id'] != ''){
         $id = $_POST['id'];
@@ -143,10 +143,11 @@ if(isset($_POST['customers'], $_POST['pickedBy'])){
                                     $success = false;
                                 }
                             }
+                            
+                            $insert_stmt2->close();
                         }
     
                         if($success){
-                            $insert_stmt2->close();
                             $db->close();
     
                             echo json_encode(

@@ -179,7 +179,7 @@ $(function () {
           { 
             data: 'id',
             render: function ( data, type, row ) {
-              return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="print'+data+'" onclick="print('+data+')" class="btn btn-warning btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+              return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="complete'+data+'" onclick="complete('+data+')" class="btn btn-primary btn-sm"><i class="fas fa-check"></i></button></div><div class="col-3"><button type="button" id="print'+data+'" onclick="print('+data+')" class="btn btn-warning btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
             }
           },
           { 
@@ -282,6 +282,48 @@ $(function () {
       branchCount--;
       $(this).parents('.details').remove();
     });
+    
+    setInterval(function () {
+        //Destroy the old Datatable
+        $("#productTable").DataTable().clear().destroy();
+        
+        table = $("#productTable").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            'processing': true,
+            'serverSide': true,
+            'serverMethod': 'post',
+            'order': [[ 1, 'asc' ]],
+            'columnDefs': [ { orderable: false, targets: [0] }],
+            'ajax': {
+                'url':'php/loadJobs.php'
+            },
+            'columns': [
+              { data: 'job_no' },
+              { data: 'customer_name' },
+              { data: 'name' },
+              { data: 'status' },
+              { 
+                data: 'id',
+                render: function ( data, type, row ) {
+                  return '<div class="row"><div class="col-3"><button type="button" id="edit'+data+'" onclick="edit('+data+')" class="btn btn-success btn-sm"><i class="fas fa-pen"></i></button></div><div class="col-3"><button type="button" id="complete'+data+'" onclick="complete('+data+')" class="btn btn-primary btn-sm"><i class="fas fa-check"></i></button></div><div class="col-3"><button type="button" id="print'+data+'" onclick="print('+data+')" class="btn btn-warning btn-sm"><i class="fas fa-print"></i></button></div><div class="col-3"><button type="button" id="deactivate'+data+'" onclick="deactivate('+data+')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></div></div>';
+                }
+              },
+              { 
+                className: 'dt-control',
+                orderable: false,
+                data: null,
+                render: function ( data, type, row ) {
+                  return '<td class="table-elipse" data-toggle="collapse" data-target="#demo'+row.serialNo+'"><i class="fas fa-angle-down"></i></td>';
+                }
+              }
+            ],
+            "rowCallback": function( row, data, index ) {
+    
+                //$('td', row).css('background-color', '#E6E6FA');
+            },        
+        });
+    }, 10000);
 });
 
 function format(row) {
@@ -411,6 +453,29 @@ function deactivate(id){
   if (confirm('Are you sure you want to delete this items?')) {
     $('#spinnerLoading').show();
     $.post('php/deleteJobs.php', {userID: id}, function(data){
+        var obj = JSON.parse(data);
+        
+        if(obj.status === 'success'){
+            toastr["success"](obj.message, "Success:");
+            $('#productTable').DataTable().ajax.reload();
+            $('#spinnerLoading').hide();
+        }
+        else if(obj.status === 'failed'){
+            toastr["error"](obj.message, "Failed:");
+            $('#spinnerLoading').hide();
+        }
+        else{
+            toastr["error"]("Something wrong when activate", "Failed:");
+            $('#spinnerLoading').hide();
+        }
+    });
+  }
+}
+
+function complete(id){
+  if (confirm('Are you sure you want to complete this jobs?')) {
+    $('#spinnerLoading').show();
+    $.post('php/completeJobs.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){

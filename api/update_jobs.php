@@ -36,7 +36,7 @@ if (isset($post['weighing'])) {
     
                 //array_push($test, $check_stmt->num_rows);
     			if ($check_stmt->num_rows > 0) {
-    				$check_stmt->bind_result($net, $product_id, $diameter, $width, $width);
+    				$check_stmt->bind_result($net, $product_id, $diameter, $width, $grade);
     				$check_stmt->fetch();
     				$check_stmt->close();
     				

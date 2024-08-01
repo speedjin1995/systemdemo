@@ -12,18 +12,18 @@ $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
 $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Search value
 
 ## Search 
-$searchQuery = "";
+$searchQuery = " ";
 if($searchValue != ''){
-  $searchQuery = " and (serial_no like '%".$searchValue."%'";
+  $searchQuery = " where (serial_no like '%".$searchValue."%')";
 }
 
 ## Total number of records without filtering
-$sel = mysqli_query($db,"select count(*) as allcount from mother_rolls");
+$sel = mysqli_query($db, "select count(*) as allcount from mother_rolls");
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from mother_rolls".$searchQuery);
+$sel = mysqli_query($db, "select count(*) as allcount from mother_rolls".$searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
@@ -39,7 +39,7 @@ while($row = mysqli_fetch_assoc($empRecords)) {
   if($row['serial_no']!=null && $row['serial_no']!=''){
     $id = $row['serial_no'];
 
-    if ($update_stmt = $db->prepare("SELECT weighing.*, users.name, products.product_name, products.basis_weight, grade.grade as class FROM weighing, users, products, grade WHERE grade.id=weighing.grade AND products.id=weighing.product AND users.id=weighing.staff_name AND weighing.mother_serials=?")) {
+    if ($update_stmt = $db->prepare("SELECT weighing.*, users.name, products.product_name, products.basis_weight, grade.grade as class FROM weighing, users, products, grade WHERE grade.id=weighing.grade AND products.id=weighing.product AND users.id=weighing.staff_name AND weighing.deleted='0' AND weighing.mother_serials=?")) {
       $update_stmt->bind_param('s', $id);
       
       if ($update_stmt->execute()) {
