@@ -29,7 +29,20 @@ function totalWeight($strings){
 }
 
 if(isset($_POST['userID'], $_POST["file"])){
+    $stmt = $db->prepare("SELECT * FROM companies WHERE id=?");
+    $stmt->bind_param('s', $compids);
+    $stmt->execute();
+    $result1 = $stmt->get_result();
     $id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
+            
+    if ($row = $result1->fetch_assoc()) {
+        $compname = $row['name'];
+        $compreg = $row['company_reg_no'];
+        $compaddress = $row['address'];
+        $compphone = $row['phone'];
+        $compiemail = $row['email'];
+    }
+
     $empQuery = "select jobs.*, customers.customer_name, customers.customer_address, customers.customer_address2, 
     customers.customer_address3, customers.customer_address4, customers.customer_phone,users.name, jobs.status, jobs.created_datetime 
     from jobs, users, customers WHERE jobs.deleted = '0' AND users.id = jobs.pick_by AND customers.id = jobs.customer AND jobs.id=
@@ -205,10 +218,10 @@ if(isset($_POST['userID'], $_POST["file"])){
                 <div>
                     <div style="font-size: 14px; padding-left: 5px;">
                         <div>
-                            <h1 style="display:inline">TSP 3G SDN. BHD.(1282904-U)</h1>
+                            <h1 style="display:inline">'.$compname.'('.$compreg.')</h1>
                         </div>
-                        <div>32nd Miles, Jalan Ipoh, 44200 Rasa, Hulu Selangor, Selangor Darul Ehsan, Malaysia.</div>
-                        <div>T: 03-60573101, 03-60573102 &nbsp;&nbsp;&nbsp;&nbsp;F : 03-60573250  &nbsp;&nbsp;&nbsp;&nbsp;E : tsp3g@hotmail.com</div>
+                        <div>'.$compaddress.'</div>
+                        <div>T: '.$compphone.' &nbsp;&nbsp;&nbsp;&nbsp;F : 03-60573250  &nbsp;&nbsp;&nbsp;&nbsp;E : '.$compiemail.'</div>
                     </div>
                 </div><br>
                 <h2><u>Packing List</u></h2>
