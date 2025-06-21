@@ -10,12 +10,12 @@ if (isset($post['weighing'], $post['createdDatetime'])) {
     $createdDatetime = $post['createdDatetime'];
     $availability = '0'; // Set the availability value
     $job_details_id = null; // Set the availability value
+    $success = true;
     
     for($i=0; $i<count($post['weighing']); $i++){
         $job = $post['weighing'][$i];
-        
         $weigh_data = $job['weigh_data'];
-        $success = true;
+        
     
         foreach ($weigh_data as $item) {
             $id = $item['id'];
@@ -27,12 +27,13 @@ if (isset($post['weighing'], $post['createdDatetime'])) {
                 if (!$update_stmt->execute()) {
                     $success = false;
                 }
+                
+                $update_stmt->close();
             }
         }
     }
 
     if ($success) {
-        $update_stmt->close();
         $db->close();
 
         echo json_encode([
@@ -41,7 +42,6 @@ if (isset($post['weighing'], $post['createdDatetime'])) {
         ]);
     } 
     else {
-        $update_stmt->close();
         $db->close();
 
         echo json_encode([
