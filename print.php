@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once 'php/db_connect.php';
 
 $productName = '';

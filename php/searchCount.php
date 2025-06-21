@@ -1,9 +1,8 @@
 <?php
 ## Database configuration
+session_start();
 require_once 'db_connect.php';
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
-session_start();
 
 ## Read value
 $draw = $_POST['draw'];

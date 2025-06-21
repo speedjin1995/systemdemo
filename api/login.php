@@ -2,7 +2,6 @@
 require_once 'db_connect.php';
 
 session_start();
-
 $post = json_decode(file_get_contents('php://input'), true);
 
 $username=$post['userEmail'];

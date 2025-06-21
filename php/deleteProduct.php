@@ -1,10 +1,9 @@
 <?php
+session_start();
 require_once 'db_connect.php';
 
-session_start();
-
 if(!isset($_SESSION['userID'])){
-	echo '<script type="text/javascript">location.href = "../login.html";</script>'; 
+	echo '<script type="text/javascript">location.href = "../login.php";</script>'; 
 }
 
 if(isset($_POST['userID'])){

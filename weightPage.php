@@ -1,11 +1,10 @@
 <?php
-require_once 'php/db_connect.php';
-
 session_start();
+require_once 'php/db_connect.php';
 
 if(!isset($_SESSION['userID'])){
   echo '<script type="text/javascript">';
-  echo 'window.location.href = "login.html";</script>';
+  echo 'window.location.href = "login.php";</script>';
 }
 else{
   $user = $_SESSION['userID'];
@@ -18,13 +17,13 @@ else{
     $role = $row['role_code'];
   }
 
-  $lots = $db->query("SELECT * FROM lots WHERE deleted = '0'");
-  $vehicles = $db->query("SELECT * FROM vehicles WHERE deleted = '0'");
+  // = $db->query("SELECT * FROM lots WHERE deleted = '0'");
+  //$vehicles = $db->query("SELECT * FROM vehicles WHERE deleted = '0'");
   $products = $db->query("SELECT * FROM products WHERE deleted = '0'");
   $packages = $db->query("SELECT * FROM packages WHERE deleted = '0'");
   $customers = $db->query("SELECT * FROM customers WHERE deleted = '0'");
   $suppliers = $db->query("SELECT * FROM supplies WHERE deleted = '0'");
-  $units = $db->query("SELECT * FROM units WHERE deleted = '0'");
+  //$units = $db->query("SELECT * FROM units WHERE deleted = '0'");
   $status = $db->query("SELECT * FROM `status` WHERE deleted = '0'");
   $transporters = $db->query("SELECT * FROM `transporters` WHERE deleted = '0'");
 }

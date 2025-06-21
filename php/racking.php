@@ -1,11 +1,10 @@
 <?php
-require_once "db_connect.php";
-
 session_start();
+require_once "db_connect.php";
 
 if(!isset($_SESSION['userID'])){
     echo '<script type="text/javascript">';
-    echo 'window.location.href = "../login.html";</script>';
+    echo 'window.location.href = "../login.php";</script>';
 }
 
 if(isset($_POST['warehouse'], $_POST['rackNo'])){

@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 require_once 'db_connect.php';
 // // Load the database configuration file 
  

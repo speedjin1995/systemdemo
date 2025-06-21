@@ -1,5 +1,6 @@
 <?php
 ## Database configuration
+session_start();
 require_once 'db_connect.php';
 
 ## Read value
@@ -14,16 +15,16 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = " ";
 if($searchValue != ''){
-   $searchQuery = " AND (jobs.job_no like '%".$searchValue."%' OR products.product_name like '%".$searchValue."%' OR users.name like '%".$searchValue."%')";
+   $searchQuery = " AND (jobs.job_no like '%".$searchValue."%' OR users.name like '%".$searchValue."%')";
 }
 
 ## Total number of records without filtering
-$sel = mysqli_query($db,"select count(*) as allcount from jobs");
+$sel = mysqli_query($db,"select count(*) as allcount from jobs, users, customers WHERE jobs.deleted = '0' AND users.id = jobs.pick_by AND customers.id = jobs.customer");
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from jobs WHERE deleted = '0'".$searchQuery);
+$sel = mysqli_query($db,"select count(*) as allcount from jobs, users, customers WHERE jobs.deleted = '0' AND users.id = jobs.pick_by AND customers.id = jobs.customer".$searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 

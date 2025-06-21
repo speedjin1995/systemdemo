@@ -1,14 +1,14 @@
 <?php
-require_once 'php/db_connect.php';
-
 session_start();
 
 if(!isset($_SESSION['userID'])){
   echo '<script type="text/javascript">';
-  echo 'window.location.href = "login.html";</script>';
+  echo 'window.location.href = "login.php";</script>';
 }
 else{
+  require_once 'php/db_connect.php';
   $user = $_SESSION['userID'];
+  $company = $_SESSION['company'];
   $stmt = $db->prepare("SELECT * from users where id = ?");
 	$stmt->bind_param('s', $user);
 	$stmt->execute();
@@ -318,8 +318,13 @@ to get the desired effect
   <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #ffffff;">
     <!-- Brand Logo -->
     <a href="#" class="brand-link logo-switch" style="line-height: 3.5;">
-      <img src="assets/logoSmall2.png" alt="Sneakercube Logo" class="brand-image-xl logo-xs">
-      <img src="assets/logo.jpeg" alt="Sneakercube Logo" class="brand-image-xl logo-xl" style="width: 70%;max-height: max-content;">
+      <?php if ($company == 'tsp3g'){ ?>
+        <img src="assets/logoSmall2.png" alt="TSP3G Small Logo" class="brand-image-xl logo-xs">
+        <img src="assets/logo.jpeg" alt="TSP3G Large Logo" class="brand-image-xl logo-xl" style="width: 70%; max-height: max-content;">
+      <?php }else { ?>
+        <img src="assets/logoSmall3.png" alt="ABC Small Logo" class="brand-image-xl logo-xs">
+        <img src="assets/logo.png" alt="ABC Large Logo" class="brand-image-xl logo-xl" style="width: 70%; max-height: max-content;">
+      <?php } ?>
     </a>
 
     <!-- Sidebar -->

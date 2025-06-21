@@ -1,8 +1,7 @@
 <?php
+session_start();
 require_once 'db_connect.php';
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
-session_start();
 
 if(isset($_POST['status'], $_POST['lotNo'], $_POST['invoiceNo'], $_POST['vehicleNo'], $_POST['customerNo'], $_POST['deliveryNo'], $_POST['unitWeight']
 , $_POST['batchNo'], $_POST['purchaseNo'], $_POST['currentWeight'], $_POST['product'], $_POST['moq'], $_POST['tareWeight'], $_POST['package'], $_POST['unitPrice'], $_POST['actualWeight']

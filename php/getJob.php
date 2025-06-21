@@ -1,7 +1,6 @@
 <?php
-require_once "db_connect.php";
-
 session_start();
+require_once "db_connect.php";
 
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
